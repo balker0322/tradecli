@@ -83,6 +83,25 @@ def get_position_size(pair):
         error_print('error in get_position_size')
         error_print(e)
 
+def set_max_position_size(pair, max_position_size):
+    try:
+        model_file = load_file()
+        model_file[pair]['max_position_size'] = float(max_position_size)
+        dump_file(model_file)
+        info_print('{} pair max position size is set to {} {}'.format(pair, get_max_position_size(pair), pair[:-len('USDT')]))
+    except Exception as e:
+        error_print('error in set_max_position_size')
+        error_print(e)
+
+def get_max_position_size(pair):
+    try:
+        model_file = load_file()
+        return model_file[pair]['max_position_size']
+    except Exception as e:
+        error_print('error in get_max_position_size')
+        error_print(e)
+
+
 def set_target_entry(pair, target_entry):
     try:
         model_file = load_file()
