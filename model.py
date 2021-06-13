@@ -1,4 +1,5 @@
 import pickle as pk
+from message import *
 
 MODEL_FILE_NAME = 'model.pk'
 
@@ -12,11 +13,21 @@ def init_pair_info(pair_info):
     dump_file(pair_info)
 
 def set_capital(capital):
-    print('Setting capital to {}'.format(capital))
+    try:
+        cap = float(capital)
+        model_file = load_file()
+        model_file['capital'] = cap
+        dump_file(model_file)
+        info_print('capital is set to {}'.format(get_capital()))
+    except:
+        error_print('error')
 
 def get_capital():
-    print('TODO: get_capital')
-    return 1000.0
+    try:
+        model_file = load_file()
+        return model_file['capital']
+    except:
+        error_print('error')
 
 def set_risk_as_percent(percentage):
     print('risk percentage is entered')
