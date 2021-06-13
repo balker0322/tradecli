@@ -60,11 +60,20 @@ def settargetexit(pair, target_exit):
     
 # Calculate Max Position
 @main.command()
-def calcmaxpos():
+@click.argument('pair')
+def calcmaxpos(pair):
     '''
     Calculate Maximum position size based on risk amount, target entry and target exit
     '''
-    pass
+    # max_position_size = calc_position_size(
+    #     entry_price=get_target_entry(pair),
+    #     stop_loss_price=get_target_exit(pair),
+    #     min_lot_size=get_min_lot_size(pair),
+    #     risk=get_risk()
+    # )
+    # set_max_position_size(pair, max_position_size)
+    print('min_lot_size: {}'.format(get_min_lot_size(pair)))
+    print('min_price_step: {}'.format(get_min_price_step(pair)))
 
 # Set Position
 @main.command()
@@ -233,6 +242,15 @@ def settp(pair, price):
     Set TP price
     '''
     set_tp(pair, price)
+
+# Set TP as price
+@main.command()
+@click.argument('pair')
+def printtargetpnl(pair):
+    '''
+    TODO: Print PNL based on target entry and exit price
+    '''
+    pass
 
 
 if __name__ == '__main__':

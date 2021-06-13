@@ -12,6 +12,22 @@ def load_file(file_name=MODEL_FILE_NAME):
 def init_pair_info(pair_info):
     dump_file(pair_info)
 
+def get_min_lot_size(pair):
+    try:
+        model_file = load_file()
+        return model_file[pair]['min_lot_size']
+    except Exception as e:
+        error_print('error in get_min_lot_size')
+        error_print(e)
+
+def get_min_price_step(pair):
+    try:
+        model_file = load_file()
+        return model_file[pair]['min_price_step']
+    except Exception as e:
+        error_print('error in get_min_price_step')
+        error_print(e)
+
 def set_capital(capital):
     try:
         cap = float(capital)
@@ -102,3 +118,4 @@ def get_target_exit(pair):
     except Exception as e:
         error_print('error in get_target_exit')
         error_print(e)
+
