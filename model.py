@@ -63,21 +63,42 @@ def get_position_size(pair):
     try:
         model_file = load_file()
         return model_file[pair]['position_size']
-    except:
+    except Exception as e:
         error_print('error in get_position_size')
+        error_print(e)
 
 def set_target_entry(pair, target_entry):
-    print('TODO: set_target_entry(pair, target_entry)')
-    pass
+    try:
+        model_file = load_file()
+        model_file[pair]['target_entry'] = float(target_entry)
+        dump_file(model_file)
+        info_print('{} pair target entry is set to {} USDT'.format(pair, get_target_entry(pair)))
+    except Exception as e:
+        error_print('error in set_target_entry')
+        error_print(e)
 
 def get_target_entry(pair):
-    print('TODO: get_target_entry(pair, target_entry)')
-    pass
+    try:
+        model_file = load_file()
+        return model_file[pair]['target_entry']
+    except Exception as e:
+        error_print('error in get_target_entry')
+        error_print(e)
 
 def set_target_exit(pair, target_exit):
-    print('TODO: set_target_exit(pair, target_exit)')
-    pass
+    try:
+        model_file = load_file()
+        model_file[pair]['target_exit'] = float(target_exit)
+        dump_file(model_file)
+        info_print('{} pair target exit is set to {} USDT'.format(pair, get_target_exit(pair)))
+    except Exception as e:
+        error_print('error in set_target_exit')
+        error_print(e)
 
 def get_target_exit(pair):
-    print('TODO: get_target_exit(pair, target_exit)')
-    pass
+    try:
+        model_file = load_file()
+        return model_file[pair]['target_exit']
+    except Exception as e:
+        error_print('error in get_target_exit')
+        error_print(e)
