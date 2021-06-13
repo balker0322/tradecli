@@ -1,8 +1,15 @@
 import pickle as pk
 
+MODEL_FILE_NAME = 'model.pk'
+
+def dump_file(data):
+    pk.dump(data,open(MODEL_FILE_NAME, 'wb'))
+
+def load_file(file_name=MODEL_FILE_NAME):
+    return pk.load(open(file_name, 'rb'))
+
 def init_pair_info(pair_info):
-    print('TODO: init_pair_info')
-    pass
+    dump_file(pair_info)
 
 def set_capital(capital):
     print('Setting capital to {}'.format(capital))

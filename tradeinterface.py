@@ -1,7 +1,17 @@
+from src.binance_futures import BinanceFutures
 
 
 def get_pair_info():
-    print('TODO: get_pair_info')
+    exchange = BinanceFutures(account='binanceaccount1', pair='BTCUSDT', demo=False)
+    raw_pair_info = exchange.get_futures_exchange_info()['symbols']
+    pair_info = dict()
+    for pair in raw_pair_info:
+        if pair['symbol'][-len('USDT'):] == 'USDT':
+            pair_info[pair['symbol']] = {
+                'min_lot_size' : pair['filters'][1]['minQty'],
+                'min_price_step' : pair['filters'][0]['tickSize'],
+            }
+    return pair_info
 
 def market_long_entry(pair, position_size):
     print('TODO: market_long_entry')
