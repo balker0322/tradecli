@@ -71,7 +71,8 @@ def calcmaxpos(pair):
         min_lot_size=get_min_lot_size(pair),
         risk=get_risk()
     )
-    set_max_position_size(pair, max_position_size)
+    print('{} max_position_size is {}'.format(pair, max_position_size))
+    # set_max_position_size(pair, max_position_size)
 
 # Set Position
 @main.command()

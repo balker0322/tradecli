@@ -4,6 +4,12 @@ RISK = '0.05'
 RR_RATIO = '2.0'
 K_FACTOR = '1.0007'
 
+
+def calc_position_size(entry_price, stop_loss_price, min_lot_size, risk=RISK, k_factor=K_FACTOR):
+    if float(entry_price) > float(stop_loss_price):
+        return long_pos_size(entry_price, stop_loss_price, min_lot_size, risk)
+    return short_pos_size(entry_price, stop_loss_price, min_lot_size, risk)
+
 def long_tp(entry_price, position_size, min_price_step, risk=RISK, rr_ratio=RR_RATIO, k_factor=K_FACTOR):
     adj_factor = d('1.0') / d(k_factor)
     tp = abs(d(risk)*d(rr_ratio)) / abs(d(position_size))
@@ -20,8 +26,8 @@ def long_sl(entry_price, position_size, min_price_step, risk=RISK, k_factor=K_FA
 
 def long_pos_size(entry_price, stop_loss_price, min_lot_size, risk=RISK, k_factor=K_FACTOR):
     adj_factor = d('1.0') / d(k_factor)
-    ps = abs(d(stop_loss_price)*adj_factor - d(entry_price))
-    ps = abs(d(risk)) / ps
+    ps = d(stop_loss_price)*adj_factor - d(entry_price)
+    ps = d(risk) / ps
     return float(round_param(ps, min_lot_size))
 
 def short_tp(entry_price, position_size, min_price_step, risk=RISK, rr_ratio=RR_RATIO, k_factor=K_FACTOR):
@@ -38,8 +44,8 @@ def short_sl(entry_price, position_size, min_price_step, risk=RISK, k_factor=K_F
 
 def short_pos_size(entry_price, stop_loss_price, min_lot_size, risk=RISK, k_factor=K_FACTOR):
     adj_factor = d('1.0') / d(k_factor)
-    ps = abs(d(stop_loss_price)- d(entry_price)*adj_factor )
-    ps = abs(d(risk)) / ps
+    ps = d(entry_price)*adj_factor - d(stop_loss_price)
+    ps = d(risk) / ps
     return float(round_param(ps, min_lot_size))
 
 def round_param(param_size, min_param_step):
