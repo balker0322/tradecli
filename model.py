@@ -30,24 +30,41 @@ def get_capital():
         error_print('error')
 
 def set_risk_as_percent(percentage):
-    print('risk percentage is entered')
-    pass
+    risk = float(percentage) * float(get_capital())
+    set_risk(risk)
 
 def set_risk(risk):
-    print('risk amount is entered')
-    pass
+    try:
+        model_file = load_file()
+        model_file['risk'] = float(risk)
+        dump_file(model_file)
+        info_print('risk is set to {}'.format(get_risk()))
+    except:
+        error_print('error')
 
 def get_risk():
-    print('TODO: get_risk')
-    pass
+    try:
+        model_file = load_file()
+        return model_file['risk']
+    except:
+        error_print('error')
 
 def set_position_size(pair, position_size):
-    print('TODO: set_position_size(pair, position_size)')
-    pass
+    try:
+        model_file = load_file()
+        model_file[pair]['position_size'] = float(position_size)
+        dump_file(model_file)
+        info_print('{} pair position size is set to {} {}'.format(pair, get_position_size(pair), pair[:-len('USDT')]))
+    except Exception as e:
+        error_print('error in set_position_size')
+        error_print(e)
 
 def get_position_size(pair):
-    print('TODO: get_position_size(pair)')
-    pass
+    try:
+        model_file = load_file()
+        return model_file[pair]['position_size']
+    except:
+        error_print('error in get_position_size')
 
 def set_target_entry(pair, target_entry):
     print('TODO: set_target_entry(pair, target_entry)')
