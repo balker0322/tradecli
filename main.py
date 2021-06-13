@@ -65,13 +65,13 @@ def calcmaxpos(pair):
     '''
     Calculate Maximum position size based on risk amount, target entry and target exit
     '''
-    # max_position_size = calc_position_size(
-    #     entry_price=get_target_entry(pair),
-    #     stop_loss_price=get_target_exit(pair),
-    #     min_lot_size=get_min_lot_size(pair),
-    #     risk=get_risk()
-    # )
-    set_max_position_size(pair, 103.0)
+    max_position_size = calc_position_size(
+        entry_price=get_target_entry(pair),
+        stop_loss_price=get_target_exit(pair),
+        min_lot_size=get_min_lot_size(pair),
+        risk=get_risk()
+    )
+    set_max_position_size(pair, max_position_size)
 
 # Set Position
 @main.command()
