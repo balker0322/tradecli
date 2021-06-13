@@ -1,5 +1,6 @@
 import pickle as pk
 from message import *
+from tradecalc import *
 
 MODEL_FILE_NAME = 'model.pk'
 
@@ -52,7 +53,7 @@ def set_risk_as_percent(percentage):
 def set_risk(risk):
     try:
         model_file = load_file()
-        model_file['risk'] = float(risk)
+        model_file['risk'] = -1.0*abs(float(risk))
         dump_file(model_file)
         info_print('risk is set to {}'.format(get_risk()))
     except:
