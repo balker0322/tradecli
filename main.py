@@ -254,6 +254,7 @@ def printtargetpnl(pair):
 
 # Show info
 @main.command()
+@click.argument('pair')
 def showaccountinfo():
     '''
     Show Account Info
