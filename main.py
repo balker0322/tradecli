@@ -242,7 +242,7 @@ def settp(pair, price):
     '''
     set_tp(pair, price)
 
-# Set TP as price
+# Print PNL based on target entry and exit price
 @main.command()
 @click.argument('pair')
 def printtargetpnl(pair):
@@ -250,6 +250,39 @@ def printtargetpnl(pair):
     TODO: Print PNL based on target entry and exit price
     '''
     pass
+
+
+# Show info
+@main.command()
+def showaccountinfo():
+    '''
+    Show Account Info
+    '''
+    capital = float(get_capital())
+    risk = float(get_risk())
+    percent_risk = (risk/capital)*100.0
+    print('Capital:\t{:.2f}\tUSDT'.format(capital))
+    print('Risk:   \t{:.2f}\tUSDT ({:.2f}%)'.format(risk, percent_risk))
+
+
+# Calculate exit prices
+@main.command()
+@click.argument('pair')
+def calcexitprice(pair):
+    '''
+    Calculate exit prices
+    '''
+    target_entry = get_target_entry(pair)
+    target_exit = get_target_exit(pair)
+    min_price_step = get_min_price_step(pair)
+    rr_ratio = ['-1','0','1','2','3','4']
+    for rr in rr_ratio:
+        price = calc_exit_price(entry_price=target_entry, stop_loss_price=target_exit, min_price_step=min_price_step, rr_ratio=rr)
+        s = 'RR_RATIO: {:.1f}'.format(float(rr)) if float(rr) > 0.0 else ('STOPLOSS' if float(rr) < 0.0 else 'BREAKEVEN')
+        print('{}\t{}'.format(
+            s,
+            price
+        ))
 
 
 if __name__ == '__main__':
