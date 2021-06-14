@@ -19,44 +19,38 @@ def get_pair_info():
 def market_long_entry(pair, position_size):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     exchange.entry("Long", True, position_size)
-    print('CHECK: market_long_entry')
 
 def market_short_entry(pair, position_size):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     exchange.entry("Short", False, position_size)
-    print('CHECK: market_short_entry')
 
 def limit_long_entry(pair, position_size, entry_price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     exchange.entry("Long", True, position_size, limit=entry_price)
-    print('CHECK: limit_long_entry')
 
 def limit_short_entry(pair, position_size, entry_price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     exchange.entry("Short", False, position_size, limit=entry_price)
-    print('CHECK: limit_short_entry')
 
 def stop_limit_long_entry(pair, position_size, entry_price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     dummy_price = round_param(float(entry_price)*(1.00+0.005), get_min_price_step(pair))
     dummy_price = float(dummy_price)
     exchange.entry("Long", True, position_size, limit=dummy_price, stop=entry_price)
-    print('CHECK: stop_limit_long_entry')
 
 def stop_limit_short_entry(pair, position_size, entry_price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     dummy_price = round_param(float(entry_price)*(1.00-0.005), get_min_price_step(pair))
     dummy_price = float(dummy_price)
     exchange.entry("Short", False, position_size, limit=dummy_price, stop=entry_price)
-    print('CHECK: stop_limit_short_entry')
 
 def print_open_orders(pair):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
-    print('TODO: print_open_orders(pair)')
+    return exchange.get_all_open_orders()
 
 def print_open_position(pair):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
-    print('TODO: print_open_position(pair)')
+    return exchange.get_position()
 
 def close_open_position(pair):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
@@ -92,7 +86,10 @@ if __name__=='__main__':
     pair='XLMUSDT'
     entry_price = 0.3292
     # exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
-    stop_limit_long_entry(pair, position_size, entry_price)
+    # stop_limit_long_entry(pair, position_size, entry_price)
+    # x = print_open_orders(pair)
+    # x = print_open_position(pair)
+    # print(x)
     # exchange.entry("Long", True, position_size, limit=0.33, stop=0.4)
     # exchange.entry("Short", False, position_size)
     # exchange.entry("Long", True, position_size, limit=0.30, stop=0.40)
