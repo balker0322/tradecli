@@ -1166,6 +1166,54 @@ class BinanceFutures:
         return self.symbol_ticker
 
 
+    def set_mul_tp(self, tp_targets):
+        """
+        set multiple take profit
+        """
+
+        pos_size = float(self.get_position()['positionAmt'])
+        if pos_size == 0 or len(tp_targets) == 0:
+            print('No open position for {} pair'.format(self.pair))
+            return
+
+        total_position_size = abs(pos_size)
+
+        total_tp_pos_size = 0.0
+        for tp_target in tp_targets:
+            total_tp_pos_size += float(tp_target['position_size'])
+
+        if not total_tp_pos_size == total_position_size:
+            print('not total_tp_pos_size == total_position_size')
+            return
+
+        # tp
+        tp_orders = self.get_tp_order()   
+        
+        # in long position
+        if pos_size > 0:   
+            if tp_orders is not None:
+                # time.sleep(2)                            
+                for tp_order in tp_orders:                                    
+                    self.cancel(id=tp_order['clientOrderId'])
+                # time.sleep(2)
+            for tp_target in tp_targets:
+                tp_price_long = float(tp_target['price'])
+                position_size = float(tp_target['position_size'])
+                self.order("TP", False, position_size, limit=tp_price_long, reduce_only=True)
+
+        # in short position   
+        if pos_size < 0:                
+            if tp_orders is not None:
+                # time.sleep(2)
+                for tp_order in tp_orders:                                    
+                    self.cancel(id=tp_order['clientOrderId'])
+                # time.sleep(2)
+            for tp_target in tp_targets:
+                tp_price_short = float(tp_target['price'])
+                position_size = float(tp_target['position_size'])
+                self.order("TP", True, position_size, limit=tp_price_short, reduce_only=True)
+
+
     def set_tp(self, tp_price, amount=None):
         """
         set take profit

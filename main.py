@@ -57,7 +57,42 @@ def settargetexit(pair, target_exit):
     Set Target Exit
     '''
     set_target_exit(pair, target_exit)
+
+
+# Set take profit
+@main.command()
+@click.argument('pair')
+@click.argument('tp1', default=0.0)
+@click.argument('tp2', default=0.0)
+@click.argument('tp3', default=0.0)
+@click.argument('tp4', default=0.0)
+@click.argument('tp5', default=0.0)
+def settp(pair, **kwargs):
+    '''
+    Set take profit
+    '''
+    min_price_step = get_min_price_step(pair)
+    take_profit_list = []
+    for tp in kwargs:
+        if float(tp) == 0.0:
+            continue
+        take_profit_list.append(round_param(tp, min_price_step))
+    set_take_profit(pair, take_profit_list)
     
+
+
+# Append take profit
+@main.command()
+@click.argument('pair')
+@click.argument('tp')
+def appendtp(pair, tp):
+    '''
+    Append take profit
+    '''
+    min_price_step = get_min_price_step(pair)
+    append_take_profit(pair, round_param(tp, min_price_step))
+
+
 # Calculate Max Position
 @main.command()
 @click.argument('pair')
@@ -164,7 +199,7 @@ def printopenorders(pair):
     '''
     Print Open Orders
     '''
-    print_open_orders(pair)
+    get_all_orders(pair)
 
 # Print Open Position
 @main.command()
@@ -173,7 +208,7 @@ def printopenposition(pair):
     '''
     Print Open Position
     '''
-    print_open_position(pair)
+    get_open_position(pair)
 
 # Close Open Position
 @main.command()
@@ -191,7 +226,7 @@ def cancelopenorder(pair):
     '''
     Cancel Open Orders
     '''
-    cancel_open_order(pair)
+    cancel_all_order(pair)
 
 # Print Recommended exit prices
 @main.command()
@@ -200,7 +235,7 @@ def printexitprice(pair):
     '''
     Print Recommended exit prices
     '''
-    print_exit_price(pair)
+    get_exit_price(pair)
 
 # Set SL as percentage loss
 @main.command()

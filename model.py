@@ -11,7 +11,13 @@ def load_file(file_name=MODEL_FILE_NAME):
     return pk.load(open(file_name, 'rb'))
 
 def init_pair_info(pair_info):
-    dump_file(pair_info)
+    try:
+        model_file = load_file()
+        for pair in pair_info:
+            model_file[pair]=pair_info[pair]
+        dump_file(model_file)
+    except:
+        dump_file(pair_info)
 
 def get_min_lot_size(pair):
     try:
@@ -124,7 +130,7 @@ def get_target_entry(pair):
 def set_target_exit(pair, target_exit):
     try:
         model_file = load_file()
-        model_file[pair]['target_exit'] = float(target_exit)
+        model_file[pair]['stop_loss'] = float(target_exit)
         dump_file(model_file)
         info_print('{} pair target exit is set to {} USDT'.format(pair, get_target_exit(pair)))
     except Exception as e:
@@ -134,8 +140,37 @@ def set_target_exit(pair, target_exit):
 def get_target_exit(pair):
     try:
         model_file = load_file()
-        return model_file[pair]['target_exit']
+        return model_file[pair]['stop_loss']
     except Exception as e:
         error_print('error in get_target_exit')
         error_print(e)
+
+def append_take_profit(pair, take_profit):
+    try:
+        model_file = load_file()
+        model_file[pair]['take_profit'].append(float(take_profit))
+        dump_file(model_file)
+        info_print('{} pair take profit is set to {} USDT'.format(pair, get_take_profit(pair)))
+    except Exception as e:
+        error_print('error in set_take_profit')
+        error_print(e)
+
+def set_take_profit(pair, take_profit_list):
+    try:
+        model_file = load_file()
+        model_file[pair]['take_profit'] = take_profit_list
+        dump_file(model_file)
+        info_print('{} pair take profit is set to {} USDT'.format(pair, get_take_profit(pair)))
+    except Exception as e:
+        error_print('error in set_take_profit')
+        error_print(e)
+
+def get_take_profit(pair):
+    try:
+        model_file = load_file()
+        return model_file[pair]['take_profit']
+    except Exception as e:
+        error_print('error in get_take_profit')
+        error_print(e)
+
 

@@ -13,6 +13,7 @@ def get_pair_info():
             pair_info[pair['symbol']] = {
                 'min_lot_size' : pair['filters'][1]['minQty'],
                 'min_price_step' : pair['filters'][0]['tickSize'],
+                'take_profit':[]
             }
     return pair_info
 
