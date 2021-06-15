@@ -127,22 +127,22 @@ def get_target_entry(pair):
         error_print('error in get_target_entry')
         error_print(e)
 
-def set_target_exit(pair, target_exit):
+def set_target_stop_loss(pair, target_stop_loss):
     try:
         model_file = load_file()
-        model_file[pair]['stop_loss'] = float(target_exit)
+        model_file[pair]['stop_loss'] = float(target_stop_loss)
         dump_file(model_file)
-        info_print('{} pair target exit is set to {} USDT'.format(pair, get_target_exit(pair)))
+        info_print('{} pair target exit is set to {} USDT'.format(pair, get_target_stop_loss(pair)))
     except Exception as e:
-        error_print('error in set_target_exit')
+        error_print('error in set_target_stop_loss')
         error_print(e)
 
-def get_target_exit(pair):
+def get_target_stop_loss(pair):
     try:
         model_file = load_file()
         return model_file[pair]['stop_loss']
     except Exception as e:
-        error_print('error in get_target_exit')
+        error_print('error in get_target_stop_loss')
         error_print(e)
 
 def append_take_profit(pair, take_profit):

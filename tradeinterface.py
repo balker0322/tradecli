@@ -72,6 +72,10 @@ def set_sl(pair, price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     exchange.set_sl(price)
 
+def set_mul_tp(pair, tp_targets):
+    exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
+    exchange.set_mul_tp(tp_targets)
+
 def set_tp_reward_percentage(pair, rewardpercentage):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     print('TODO: set_tp_reward_percentage(pair, rewardpercentage)')
