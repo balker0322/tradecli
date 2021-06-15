@@ -44,6 +44,12 @@ def set_capital(capital):
         info_print('capital is set to {}'.format(get_capital()))
     except:
         error_print('error')
+    
+    try:
+        risk = float(get_risk_as_percent()) * float(get_capital())
+        set_risk(risk)
+    except:
+        pass
 
 def get_capital():
     try:
@@ -53,8 +59,22 @@ def get_capital():
         error_print('error')
 
 def set_risk_as_percent(percentage):
-    risk = float(percentage) * float(get_capital())
+    try:
+        model_file = load_file()
+        model_file['risk_percentage'] = -1.0*abs(float(percentage))
+        dump_file(model_file)
+        info_print('risk percentage is set to {0:.2f}%'.format(get_risk_as_percent()*100.0))
+    except:
+        error_print('error')
+    risk = float(get_risk_as_percent()) * float(get_capital())
     set_risk(risk)
+
+def get_risk_as_percent():
+    try:
+        model_file = load_file()
+        return model_file['risk_percentage']
+    except:
+        error_print('get_risk_as_percent error')
 
 def set_risk(risk):
     try:

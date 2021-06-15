@@ -237,7 +237,7 @@ def sltp(pair):
             'price':tp,
             'position_size':tp_pos_size,
         })
-        total_pos_size_set += tp_pos_size
+        total_pos_size_set += float(tp_pos_size)
     
     set_sl(pair,sl_price)
     set_mul_tp(pair,tp_targets)
