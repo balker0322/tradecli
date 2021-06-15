@@ -257,11 +257,10 @@ def calc(pair):
     rr_ratio = ['-1','0','1','2','3','4']
     side = 'LONG' if target_exit < target_entry else 'SHORT'
     print('========================================')
-    print(pair)
     print('{} {} ENTRY: {} USDT'.format(pair,side,target_entry))
     for rr in rr_ratio:
         price = calc_exit_price(entry_price=target_entry, stop_loss_price=target_exit, min_price_step=min_price_step, rr_ratio=rr)
-        s = 'RR_RATIO: {:.1f}'.format(float(rr)) if float(rr) > 0.0 else ('STOPLOSS' if float(rr) < 0.0 else 'BREAKEVEN')
+        s = 'RR_RATIO: {:.1f}'.format(float(rr)) if float(rr) > 0.0 else ('STOP LOSS' if float(rr) < 0.0 else 'BREAKEVEN')
         print('{}\t{}'.format(
             s,
             price
