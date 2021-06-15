@@ -549,6 +549,38 @@ class BinanceFutures:
         self.order(id, long, ord_qty, limit, stop, post_only, reduce_only, trailing_stop, activationPrice, when)
 
 
+    def get_tp_order(self):
+        """
+        Get open order by id
+        :param id: Order id for this pair
+        :return:
+        """
+        self.__init_client()
+        open_orders = retry(lambda: self.client
+                            .futures_get_open_orders(symbol=self.pair))                                   
+        open_orders = [o for o in open_orders if (o["origType"].startswith('TAKE_PROFIT') or o["origType"].startswith('LIMIT')) and o['reduceOnly']]
+        if len(open_orders) > 0:
+            return open_orders
+        else:
+            return None
+
+
+    def get_sl_order(self):
+        """
+        Get open order by id
+        :param id: Order id for this pair
+        :return:
+        """
+        self.__init_client()
+        open_orders = retry(lambda: self.client
+                            .futures_get_open_orders(symbol=self.pair))                                   
+        open_orders = [o for o in open_orders if o["origType"].startswith('STOP') and o['reduceOnly']]
+        if len(open_orders) > 0:
+            return open_orders
+        else:
+            return None
+
+
     def get_open_order(self, id):
         """
         Get open order by id
@@ -1132,3 +1164,83 @@ class BinanceFutures:
         self.symbol_ticker = retry(lambda: self.client
                                     .futures_symbol_ticker(symbol=pair))
         return self.symbol_ticker
+
+
+    def set_tp(self, tp_price, amount=None):
+        """
+        set take profit
+        """
+
+        pos_size = float(self.get_position()['positionAmt'])
+        if pos_size == 0:
+            print('No open position for {} pair'.format(self.pair))
+            return
+
+        position_size = abs(pos_size)
+        if amount:
+            position_size = amount
+
+        # tp
+        tp_orders = self.get_tp_order()   
+        
+        # in long position
+        if pos_size > 0:       
+            tp_price_long = tp_price
+            if tp_orders is not None and amount is None:
+                # time.sleep(2)                            
+                for tp_order in tp_orders:                                    
+                    self.cancel(id=tp_order['clientOrderId'])
+                # time.sleep(2)
+                self.order("TP", False, position_size, limit=tp_price_long, reduce_only=True)
+            else:               
+                self.order("TP", False, position_size, limit=tp_price_long, reduce_only=True)
+
+        # in short position   
+        if pos_size < 0:                
+            tp_price_short = tp_price
+            if tp_orders is not None and amount is None:
+                # time.sleep(2)
+                for tp_order in tp_orders:                                    
+                    self.cancel(id=tp_order['clientOrderId'])
+                # time.sleep(2)
+                self.order("TP", True, position_size, limit=tp_price_short, reduce_only=True)
+            else:
+                self.order("TP", True, position_size, limit=tp_price_short, reduce_only=True)
+                
+
+    def set_sl(self, sl_price):
+        """
+        set stop loss
+        """
+
+        pos_size = float(self.get_position()['positionAmt'])
+        if pos_size == 0:
+            print('No open position for {} pair'.format(self.pair))
+            return
+        
+        #sl
+        sl_orders = self.get_sl_order()
+
+        # in long position
+        if pos_size > 0:
+            sl_price_long = sl_price
+            if sl_orders is not None:
+                # time.sleep(2)
+                for sl_order in sl_orders:                                    
+                    self.cancel(id=sl_order['clientOrderId'])
+                # time.sleep(2)
+                self.order("SL", False, abs(pos_size), stop=sl_price_long, reduce_only=True)
+            else:  
+                self.order("SL", False, abs(pos_size), stop=sl_price_long, reduce_only=True)
+
+        # in short position   
+        if pos_size < 0:
+            sl_price_short = sl_price
+            if sl_orders is not None: 
+                # time.sleep(2)                               
+                for sl_order in sl_orders:                                    
+                    self.cancel(id=sl_order['clientOrderId'])
+                # time.sleep(2) 
+                self.order("SL", True, abs(pos_size), stop=sl_price_short, reduce_only=True) 
+            else:  
+                self.order("SL", True, abs(pos_size), stop=sl_price_short, reduce_only=True)    

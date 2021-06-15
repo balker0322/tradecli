@@ -69,7 +69,7 @@ def set_sl_risk_percentage(pair, risk_percentage):
 
 def set_sl(pair, price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
-    print('TODO: set_sl(pair, price)')
+    exchange.set_sl(price)
 
 def set_tp_reward_percentage(pair, rewardpercentage):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
@@ -78,6 +78,20 @@ def set_tp_reward_percentage(pair, rewardpercentage):
 def set_tp(pair, price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     print('TODO: set_tp(pair, price)')
+
+def cancel_sl(pair):
+    exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
+    sl_orders = exchange.get_sl_order()
+    if sl_orders:
+        for sl_order in sl_orders:
+            exchange.cancel(sl_order['clientOrderId'])
+
+def cancel_tp(pair):
+    exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
+    tp_orders = exchange.get_tp_order()
+    if tp_orders:
+        for tp_order in tp_orders:
+            exchange.cancel(tp_order['clientOrderId'])
 
 
 
