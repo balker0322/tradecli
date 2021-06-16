@@ -97,6 +97,10 @@ def cancel_tp(pair):
     if tp_orders:
         for tp_order in tp_orders:
             exchange.cancel(tp_order['clientOrderId'])
+        
+def get_market_price(pair):
+    # TODO
+    pass
 
 
 

@@ -72,5 +72,24 @@ def short_sl(entry_price, position_size, min_price_step, risk=RISK, k_factor=K_F
 def round_param(param_size, min_param_step):
     return d(param_size) - (d(param_size)%d(min_param_step))
 
+def calc_percent_pnl(entry_price, position_size, exit_price, capital, k_factor=K_FACTOR):
+    if float(position_size) > 0.0:
+        return long_percent_pnl(entry_price, position_size, exit_price, capital, k_factor)
+    return short_percent_pnl(entry_price, position_size, exit_price, capital, k_factor)
+
+def long_percent_pnl(entry_price, position_size, exit_price, capital, k_factor=K_FACTOR):
+    adj_factor = d('1.0') / d(k_factor)
+    risk = d(exit_price)*adj_factor - d(entry_price)
+    risk = risk*abs(d(position_size))
+    risk = risk / d(capital)
+    return float(risk))
+
+def short_percent_pnl(entry_price, position_size, exit_price, capital, k_factor=K_FACTOR):
+    adj_factor = d('1.0') / d(k_factor)
+    risk = d(entry_price)*adj_factor - d(exit_price)
+    risk = risk*abs(d(position_size))
+    risk = risk / d(capital)
+    return float(risk))
+
 if __name__ == "__main__":
     print(short_sl('36000.0', '0.0321', '0.1'))

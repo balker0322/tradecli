@@ -176,12 +176,6 @@ def tprr(pair, **kwargs):
     '''
     Set take profit as rr ratio
     '''
-    # print('pair', pair)
-    # print('rr1', kwargs['rr1'])
-    # print('rr2', kwargs['rr2'])
-    # print('rr3', kwargs['rr3'])
-    # print('rr4', kwargs['rr4'])
-    # print('rr5', kwargs['rr5'])
     min_price_step = get_min_price_step(pair)
     entry_price = get_target_entry(pair)
     stop_loss_price = get_target_stop_loss(pair)
@@ -247,7 +241,7 @@ def sltp(pair):
 # Calculate exit prices
 @main.command()
 @click.argument('pair')
-def calc(pair):
+def calcrr(pair):
     '''
     Calculate exit prices
     '''
@@ -257,7 +251,8 @@ def calc(pair):
     rr_ratio = ['-1','0','1','2','3','4']
     side = 'LONG' if target_exit < target_entry else 'SHORT'
     print('========================================')
-    print('{} {} ENTRY: {} USDT'.format(pair,side,target_entry))
+    print(pair)
+    print('{} ENTRY: {} USDT'.format(pair,side,target_entry))
     for rr in rr_ratio:
         price = calc_exit_price(entry_price=target_entry, stop_loss_price=target_exit, min_price_step=min_price_step, rr_ratio=rr)
         s = 'RR_RATIO: {:.1f}'.format(float(rr)) if float(rr) > 0.0 else ('STOP LOSS' if float(rr) < 0.0 else 'BREAKEVEN')
@@ -266,6 +261,60 @@ def calc(pair):
             price
         ))
     print('========================================')
+
+
+# Show current status
+@main.command()
+@click.argument('pair')
+def stat(pair):
+    '''
+    Show current status
+    '''
+    print(pair)
+    print('Market Price: {} USDT'.format(get_market_price(pair)))
+
+    position = get_open_position(pair)
+    if float(position['positionAmt']) == 0.0:
+        print('Position: None')
+        return
+    
+    entryPrice = position['entryPrice']
+    positionAmt = position['positionAmt']
+    print('Position:')
+    print('entry:\t{} USDT'.format(entry))
+    print('qty:\t{} {}'.format(positionAmt, pair))
+
+    sl_list = get_sl_order(pair)
+    tp_list = get_tp_order(pair)
+
+    capital = get_capital(pair)
+
+    if sl_list:
+        print('SL:')
+        print('{}\t{}\t{}'.fomat('price','qty','pnl'))
+        for sl in sl_list:
+            price = sl['stopPrice']
+            qty = sl['origQty']
+            pnl = calc_percent_pnl(entryPrice, positionAmt, price, capital)
+            pnl = '{0}{1:.2f}%'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
+            print('{}\t{}\t{}'.format(price,qty,pnl))
+    else:
+        print('SL: No set Stop Loss')
+
+
+    if tp_list:
+        print('TP:')
+        print('{}\t{}\t{}'.fomat('price','qty','pnl'))
+        for sl in sl_list:
+            price = sl['price']
+            qty = sl['origQty']
+            pnl = calc_percent_pnl(entryPrice, positionAmt, price, capital)
+            pnl = '{0}{1:.2f}%'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
+            print('{}\t{}\t{}'.format(price,qty,pnl))
+    else:
+        print('TP: No set Take Profit')
+
+
     
 
 # # Set Risk
