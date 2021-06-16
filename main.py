@@ -282,7 +282,7 @@ def stat(pair):
     positionAmt = position['positionAmt']
     print('Position:')
     print('entry:\t{} USDT'.format(entry))
-    print('qty:\t{} {}'.format(positionAmt, pair))
+    print('qty:\t{} {}'.format(positionAmt, pair[-4:]))
 
     sl_list = get_sl_order(pair)
     tp_list = get_tp_order(pair)
@@ -297,10 +297,9 @@ def stat(pair):
             qty = sl['origQty']
             pnl = calc_percent_pnl(entryPrice, positionAmt, price, capital)
             pnl = '{0}{1:.2f}%'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
-            print('{}\t{}\t{}'.format(price,qty,pnl))
+            print('{} USDT\t{} {}\t{}'.format(price,qty,pair[-4:],pnl))
     else:
         print('SL: No set Stop Loss')
-
 
     if tp_list:
         print('TP:')
@@ -310,7 +309,7 @@ def stat(pair):
             qty = sl['origQty']
             pnl = calc_percent_pnl(entryPrice, positionAmt, price, capital)
             pnl = '{0}{1:.2f}%'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
-            print('{}\t{}\t{}'.format(price,qty,pnl))
+            print('{} USDT\t{} {}\t{}'.format(price,qty,pair[-4:],pnl))
     else:
         print('TP: No set Take Profit')
 

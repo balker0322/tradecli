@@ -82,14 +82,14 @@ def long_percent_pnl(entry_price, position_size, exit_price, capital, k_factor=K
     risk = d(exit_price)*adj_factor - d(entry_price)
     risk = risk*abs(d(position_size))
     risk = risk / d(capital)
-    return float(risk))
+    return float(risk)
 
 def short_percent_pnl(entry_price, position_size, exit_price, capital, k_factor=K_FACTOR):
     adj_factor = d('1.0') / d(k_factor)
     risk = d(entry_price)*adj_factor - d(exit_price)
     risk = risk*abs(d(position_size))
     risk = risk / d(capital)
-    return float(risk))
+    return float(risk)
 
 if __name__ == "__main__":
     print(short_sl('36000.0', '0.0321', '0.1'))

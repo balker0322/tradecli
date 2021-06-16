@@ -99,8 +99,8 @@ def cancel_tp(pair):
             exchange.cancel(tp_order['clientOrderId'])
         
 def get_market_price(pair):
-    # TODO
-    pass
+    exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
+    return exchange.get_market_price()
 
 
 
