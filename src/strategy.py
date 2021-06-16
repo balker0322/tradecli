@@ -478,3 +478,17 @@ class test_bot(Bot):
         pair_info = [x for x in self.exchange.client.futures_exchange_info()[0]['symbols'] if x['symbol']==self.pair]
         return pair_info[0]['filters'][0]['tickSize']
 
+
+
+
+class AutoSLTP(Bot):
+    
+    def __init__(self):
+        Bot.__init__(self, '1m')
+        # self.exchange.update_ohlcv = self.update_ohlcv
+        # update_ohlcv
+
+    def update_ohlcv(self, action, new_data):
+        print('overwrite function')
+        print(new_data)
+

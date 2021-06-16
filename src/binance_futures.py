@@ -939,7 +939,6 @@ class BinanceFutures:
         """
         get OHLCV data and execute the strategy
         """    
-
         if self.data is None:
             end_time = datetime.now(timezone.utc)
             start_time = end_time - self.ohlcv_len * delta(self.bin_size)
@@ -1170,6 +1169,9 @@ class BinanceFutures:
         """
         set multiple take profit
         """
+        if not tp_targets:
+            print('No TP set')
+            return
 
         pos_size = float(self.get_position()['positionAmt'])
         if pos_size == 0 or len(tp_targets) == 0:
