@@ -4,6 +4,16 @@ from tradeinterface import *
 from tradecalc import *
 
 
+def update_user_params(pair, e, sl, rp, rv):
+    if not rp == 0.0:
+        set_risk_as_percent(rp)
+    if not sl == 0.0:
+        set_sl(sl)
+    if not e == 0.0:
+        set_target_entry(e)
+    if (not rp == 0.0):
+        set_risk_as_percent(rp)
+
 @click.group()
 def main():
     pass
@@ -38,7 +48,7 @@ def pair:
     '''
     Set Pair
     '''
-    set_pair(pair.uppe())
+    set_pair(pair.upper())
 
 # Set Risk Percentage
 @main.command()
@@ -89,64 +99,101 @@ def ps(pair, p):
 
 # Market Long Entry
 @main.command()
+@click.option('-pair',default='')
+@click.option('-e',default=0.0)
+@click.option('-e',default=0.0)
+@click.option('-sl',default=0.0)
+@click.option('-rp',default=0.0)
+@click.option('-rv',default=0.0)
 @click.argument('pair')
-def mlong(pair):
+def mlong(pair, e, sl, rp, rv):
     '''
     Market Long Entry
     '''
+    update_user_params(pair, e, sl, rp, rv)
     position_size = get_position_size(pair)
     market_long_entry(pair, position_size)
 
 # Market Short Entry
 @main.command()
+@click.option('-pair',default='')
+@click.option('-e',default=0.0)
+@click.option('-sl',default=0.0)
+@click.option('-rp',default=0.0)
+@click.option('-rv',default=0.0)
 @click.argument('pair')
-def mshort(pair):
+def mshort(pair, e, sl, rp, rv):
     '''
     Market Short Entry
     '''
+    update_user_params(pair, e, sl, rp, rv)
     position_size = get_position_size(pair)
     market_short_entry(pair, position_size)
 
 # Limit Long Entry
 @main.command()
+@click.option('-pair',default='')
+@click.option('-e',default=0.0)
+@click.option('-sl',default=0.0)
+@click.option('-rp',default=0.0)
+@click.option('-rv',default=0.0)
 @click.argument('pair')
-def llong(pair):
+def llong(pair, e, sl, rp, rv):
     '''
     Limit Long Entry
     '''
+    update_user_params(pair, e, sl, rp, rv)
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     limit_long_entry(pair, position_size, entry_price)
 
 # Limit Short Entry
 @main.command()
+@click.option('-pair',default='')
+@click.option('-e',default=0.0)
+@click.option('-sl',default=0.0)
+@click.option('-rp',default=0.0)
+@click.option('-rv',default=0.0)
 @click.argument('pair')
-def lshort(pair):
+def lshort(pair, e, sl, rp, rv):
     '''
     Limit Short Entry
     '''
+    update_user_params(pair, e, sl, rp, rv)
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     limit_short_entry(pair, position_size, entry_price)
 
 # Stop Limit Long Entry
 @main.command()
+@click.option('-pair',default='')
+@click.option('-e',default=0.0)
+@click.option('-sl',default=0.0)
+@click.option('-rp',default=0.0)
+@click.option('-rv',default=0.0)
 @click.argument('pair')
-def sllong(pair):
+def sllong(pair, e, sl, rp, rv):
     '''
     Stop Limit Long Entry
     '''
+    update_user_params(pair, e, sl, rp, rv)
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     stop_limit_long_entry(pair, position_size, entry_price)
 
 # Stop Limit Short Entry
 @main.command()
+@click.option('-pair',default='')
+@click.option('-e',default=0.0)
+@click.option('-sl',default=0.0)
+@click.option('-rp',default=0.0)
+@click.option('-rv',default=0.0)
 @click.argument('pair')
-def slshort(pair):
+def slshort(pair, e, sl, rp, rv):
     '''
     Stop Limit Short Entry
     '''
+    update_user_params(pair, e, sl, rp, rv)
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     stop_limit_short_entry(pair, position_size, entry_price)
