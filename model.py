@@ -19,6 +19,24 @@ def init_pair_info(pair_info):
     except:
         dump_file(pair_info)
 
+def set_pair(pair):
+    try:
+        model_file = load_file()
+        model_file['selected_pair'] = pair.upper()
+        dump_file(model_file)
+    except Exception as e:
+        error_print('error in set_pair function')
+        error_print(e)
+
+def get_pair():
+    try:
+        model_file = load_file()
+        return model_file['selected_pair']
+    except Exception as e:
+        error_print('error in set_pair function')
+        error_print(e)
+
+
 def get_min_lot_size(pair):
     try:
         model_file = load_file()

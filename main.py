@@ -31,6 +31,15 @@ def c(c1, c2, c3):
     capital = float(c1) + float(c2) + float(c3)
     set_capital(capital)
 
+# set pair
+@main.command()
+@click.argument('pair')
+def pair:
+    '''
+    Set Pair
+    '''
+    set_pair(pair.uppe())
+
 # Set Risk Percentage
 @main.command()
 @click.argument('risk_percentage')
@@ -281,7 +290,7 @@ def stat(pair):
     entryPrice = position['entryPrice']
     positionAmt = position['positionAmt']
     print('Position:')
-    print('entry:\t{} USDT'.format(entry))
+    print('entry:\t{} USDT'.format(entryPrice))
     print('qty:\t{} {}'.format(positionAmt, pair[-4:]))
 
     sl_list = get_sl_order(pair)

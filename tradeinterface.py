@@ -102,6 +102,14 @@ def get_market_price(pair):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     return exchange.get_market_price()
 
+def get_tp_order(pair):
+    exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
+    return exchange.get_tp_order()
+
+def get_sl_order(pair):
+    exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
+    return exchange.get_sl_order()
+
 
 
 if __name__=='__main__':
