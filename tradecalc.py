@@ -22,6 +22,24 @@ def short_pos_size(entry_price, stop_loss_price, min_lot_size, risk=RISK, k_fact
     ps = d(risk) / ps
     return float(round_param(ps, min_lot_size))
 
+def calc_pnl_exit_price(entry_price, position, min_price_step, pnl, k_factor=K_FACTOR):
+    if float(position) > 0.0:
+        return long_pnl_exit_price(entry_price, position, min_price_step, pnl, k_factor)
+    return short_pnl_exit_price(entry_price, position, min_price_step, pnl, k_factor)
+
+def long_pnl_exit_price(entry_price, position, min_price_step, pnl, k_factor=K_FACTOR):
+    adj_factor = d('1.0') / d(k_factor)
+    exit_price = d(pnl) / abs(d(position))
+    exit_price += d(entry_price)
+    exit_price /= adj_factor
+    return float(round_param(exit_price, min_price_step))
+
+def short_pnl_exit_price(entry_price, position, min_price_step, pnl, k_factor=K_FACTOR):
+    adj_factor = d('1.0') / d(k_factor)
+    exit_price = d(pnl) / abs(d(position))
+    exit_price = d(entry_price)*adj_factor - exit_price
+    return float(round_param(exit_price, min_price_step))
+
 def calc_exit_price(entry_price, stop_loss_price, min_price_step, rr_ratio=RR_RATIO, k_factor=K_FACTOR):
     if float(entry_price) > float(stop_loss_price):
         return long_exit_price(entry_price, stop_loss_price, min_price_step, rr_ratio)
