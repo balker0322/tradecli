@@ -4,63 +4,52 @@ from tradeinterface import *
 from tradecalc import *
 
 
-def update_user_params(pr='', e=0.0, sl=0.0, rp=0.0, rv=0.0):
-    if not pr == '':
-        set_pair(pr)
-    if not rp == 0.0:
-        set_risk_as_percent(rp)
-    if not sl == 0.0:
-        set_sl(sl)
-    if not e == 0.0:
-        set_target_entry(e)
-    if (not rp == 0.0):
-        set_risk_as_percent(rp)
+def update_user_params(**kwargs):
+    if kwargs['pr']:
+        set_pair(kwargs['pr'])
+    if kwargs['rp']:
+        set_risk_as_percent(kwargs['rp'])
+    if kwargs['sl']:
+        set_sl(kwargs['sl'])
+    if kwargs['e']:
+        set_target_entry(kwargs['e'])
+    if (kwargs['rp']):
+        set_risk_as_percent(kwargs['rp'])
+    if not (kwargs['rv'] == 1.0):
+        pass
 
-# @click.group()
-# @click.option('-pr',default='')
-# @click.option('-e',default=0.0)
-# @click.option('-sl',default=0.0)
-# @click.option('-rp',default=0.0)
-# @click.option('-rv',default=0.0)
-# def main(pr, e, sl, rp, rv):
-#     print('q is {}'.format(q))
-#     pass
+    # min_lot_size = get_min_lot_size(pair)
+    # max_position_size = calc_position_size(
+    #     entry_price=get_target_entry(pair),
+    #     stop_loss_price=get_target_stop_loss(pair),
+    #     min_lot_size=min_lot_size,
+    #     risk=get_risk()
+    # )
 
-# @click.group()
-# @click.option('-q',default=0.0)
-# def main(q):
-#     print('q is {}'.format(q))
-#     pass
 
-# # for experiment
-# @main.command()
-# @click.option('-c1', default=0.0)
-# @click.argument('c2')
-# def sample(c1, c2):
-#     '''
-#     sample
-#     '''
-#     print('c1', c1)
-#     print('c2', c2)
 
+@click.group()
+def main():
+    pass
+
+# experiment
 @main.command()
-# @click.option('--capital', '-c', multiple=True)
-@click.argument('c', multiple=True)
-def capital(c):
-    print(c)
+@click.option('-q', multiple=True)
+def exp(q):
+    print(q)
 
 
-# # Set Capital
-# @main.command()
-# @click.argument('c1')
-# @click.argument('c2', default=0.0)
-# @click.argument('c3', default=0.0)
-# def c(c1, c2, c3):
-#     '''
-#     Set Capital Price in USDT. Risk percentage is be based on this price.
-#     '''
-#     capital = float(c1) + float(c2) + float(c3)
-#     set_capital(capital)
+# Set Capital
+@main.command()
+@click.argument('capital', nargs=-1)
+def c(capital):
+    '''
+    Set Capital Price in USDT. Risk percentage is be based on this price.
+    '''
+    total = 0.0
+    for cap in capital:
+        total += float(cap)
+    set_capital(total)
 
 # set pair
 @main.command()
@@ -118,103 +107,93 @@ def ps(pair, p):
     print('{} max_position_size is {}'.format(pair, max_position_size))
     set_position_size(pair, round_param(max_position_size*p,min_lot_size))
 
-# Market Long Entry
+# open position
 @main.command()
+@click.argument('et')
+@click.argument('s')
 @click.option('-pr',default='')
 @click.option('-e',default=0.0)
 @click.option('-sl',default=0.0)
 @click.option('-rp',default=0.0)
-@click.option('-rv',default=0.0)
-@click.argument('pair')
-def mlong(pair, e, sl, rp, rv):
+@click.option('-rv',default=1.0)
+@click.option('-tp', multiple=True)
+@click.option('-tprr', multiple=True)
+def open(et, s, **kwargs):
+    entry_type = et.lower()
+    side = s.lower()
+
+    update_user_params(**kwargs)
+
+    if entry_type == 'm' and side == 'long':
+        mlong()
+    elif entry_type == 'l' and side == 'long':
+        llong()
+    elif entry_type == 'sl' and side == 'long':
+        sllong()
+    elif entry_type == 'm' and side == 'short':
+        mshort()
+    elif entry_type == 'l' and side == 'short':
+        lshort()
+    elif entry_type == 'sl' and side == 'short':
+        slshort()
+    else:
+        error_print('Invalid arguments')
+        return
+
+# Market Long Entry
+def mlong():
     '''
     Market Long Entry
     '''
-    update_user_params(pair, e, sl, rp, rv)
+    pair = get_pair()
     position_size = get_position_size(pair)
     market_long_entry(pair, position_size)
 
 # Market Short Entry
-@main.command()
-@click.option('-pair',default='')
-@click.option('-e',default=0.0)
-@click.option('-sl',default=0.0)
-@click.option('-rp',default=0.0)
-@click.option('-rv',default=0.0)
-@click.argument('pair')
-def mshort(pair, e, sl, rp, rv):
+def mshort():
     '''
     Market Short Entry
     '''
-    update_user_params(pair, e, sl, rp, rv)
+    pair = get_pair()
     position_size = get_position_size(pair)
     position_size = get_position_size(pair)
     market_short_entry(pair, position_size)
 
 # Limit Long Entry
-@main.command()
-@click.option('-pair',default='')
-@click.option('-e',default=0.0)
-@click.option('-sl',default=0.0)
-@click.option('-rp',default=0.0)
-@click.option('-rv',default=0.0)
-@click.argument('pair')
-def llong(pair, e, sl, rp, rv):
+def llong():
     '''
     Limit Long Entry
     '''
-    update_user_params(pair, e, sl, rp, rv)
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     limit_long_entry(pair, position_size, entry_price)
 
 # Limit Short Entry
-@main.command()
-@click.option('-pair',default='')
-@click.option('-e',default=0.0)
-@click.option('-sl',default=0.0)
-@click.option('-rp',default=0.0)
-@click.option('-rv',default=0.0)
-@click.argument('pair')
-def lshort(pair, e, sl, rp, rv):
+def lshort():
     '''
     Limit Short Entry
     '''
-    update_user_params(pair, e, sl, rp, rv)
+    pair = get_pair()
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     limit_short_entry(pair, position_size, entry_price)
 
 # Stop Limit Long Entry
-@main.command()
-@click.option('-pair',default='')
-@click.option('-e',default=0.0)
-@click.option('-sl',default=0.0)
-@click.option('-rp',default=0.0)
-@click.option('-rv',default=0.0)
-@click.argument('pair')
-def sllong(pair, e, sl, rp, rv):
+def sllong():
     '''
     Stop Limit Long Entry
     '''
-    update_user_params(pair, e, sl, rp, rv)
+    pair = get_pair()
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     stop_limit_long_entry(pair, position_size, entry_price)
 
 # Stop Limit Short Entry
-@main.command()
-@click.option('-pair',default='')
-@click.option('-e',default=0.0)
-@click.option('-sl',default=0.0)
-@click.option('-rp',default=0.0)
-@click.option('-rv',default=0.0)
-@click.argument('pair')
-def slshort(pair, e, sl, rp, rv):
+def slshort():
     '''
     Stop Limit Short Entry
     '''
-    update_user_params(pair, e, sl, rp, rv)
+    pair = get_pair()
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     stop_limit_short_entry(pair, position_size, entry_price)
@@ -314,7 +293,6 @@ def sltp(pair):
     set_mul_tp(pair,tp_targets)
 
 
-
 # Calculate exit prices
 @main.command()
 @click.argument('pair')
@@ -389,155 +367,6 @@ def stat(pair):
             print('{} USDT\t{} {}\t{}'.format(price,qty,pair[-4:],pnl))
     else:
         print('TP: No set Take Profit')
-
-
-    
-
-# # Set Risk
-# @main.command()
-# @click.argument('risk')
-# def setrisk(risk):
-#     '''
-#     Set risk in terms of amount in USDT
-#     '''
-#     set_risk(risk)
-
-# # Append take profit
-# @main.command()
-# @click.argument('pair')
-# @click.argument('tp')
-# def appendtp(pair, tp):
-#     '''
-#     Append take profit
-#     '''
-#     min_price_step = get_min_price_step(pair)
-#     append_take_profit(pair, round_param(tp, min_price_step))
-
-
-# # Calculate Max Position
-# @main.command()
-# @click.argument('pair')
-# def calcmaxpos(pair):
-#     '''
-#     Calculate Maximum position size based on risk amount, target entry and target exit
-#     '''
-#     max_position_size = calc_position_size(
-#         entry_price=get_target_entry(pair),
-#         stop_loss_price=get_target_exit(pair),
-#         min_lot_size=get_min_lot_size(pair),
-#         risk=get_risk()
-#     )
-#     print('{} max_position_size is {}'.format(pair, max_position_size))
-#     # set_max_position_size(pair, max_position_size)
-
-# # Set Position
-# @main.command()
-# @click.argument('pair')
-# @click.argument('position_size')
-# def setpositionsize(pair, position_size):
-#     '''
-#     Set Position
-#     '''
-#     set_position_size(pair, position_size)
-
-# # Initialize Default Pair Info
-# @main.command()
-# def pairinfoinit():
-#     '''
-#     Initialize assigned variables
-#     '''
-#     pair_info = get_pair_info()
-#     init_pair_info(pair_info)
-
-# # Print Open Orders
-# @main.command()
-# @click.argument('pair')
-# def printopenorders(pair):
-#     '''
-#     Print Open Orders
-#     '''
-#     get_all_orders(pair)
-
-# # Print Open Position
-# @main.command()
-# @click.argument('pair')
-# def printopenposition(pair):
-#     '''
-#     Print Open Position
-#     '''
-#     get_open_position(pair)
-
-# # Print Recommended exit prices
-# @main.command()
-# @click.argument('pair')
-# def printexitprice(pair):
-#     '''
-#     Print Recommended exit prices
-#     '''
-#     get_exit_price(pair)
-
-# # Set SL as percentage loss
-# @main.command()
-# @click.argument('pair')
-# @click.argument('risk_percentage')
-# def setslriskpercentage(pair, risk_percentage):
-#     '''
-#     Set SL as percentage loss
-#     '''
-#     set_sl_risk_percentage(pair, risk_percentage)
-
-# # Set SL as price
-# @main.command()
-# @click.argument('pair')
-# @click.argument('price')
-# def setsl(pair, price):
-#     '''
-#     Set SL price
-#     '''
-#     set_sl(pair, price)
-
-# # Set TP as percentage reward
-# @main.command()
-# @click.argument('pair')
-# @click.argument('rewardpercentage')
-# def settprewardpercentage(pair, rewardpercentage):
-#     '''
-#     Set TP as percentage reward
-#     '''
-#     set_tp_reward_percentage(pair, rewardpercentage)
-
-# # Set TP as price
-# @main.command()
-# @click.argument('pair')
-# @click.argument('price')
-# def settp(pair, price):
-#     '''
-#     Set TP price
-#     '''
-#     set_tp(pair, price)
-
-# # Print PNL based on target entry and exit price
-# @main.command()
-# @click.argument('pair')
-# def printtargetpnl(pair):
-#     '''
-#     TODO: Print PNL based on target entry and exit price
-#     '''
-#     pass
-
-
-# # Show info
-# @main.command()
-# @click.argument('pair')
-# def showaccountinfo():
-#     '''
-#     Show Account Info
-#     '''
-#     capital = float(get_capital())
-#     risk = float(get_risk())
-#     percent_risk = (risk/capital)*100.0
-#     print('Capital:\t{:.2f}\tUSDT'.format(capital))
-#     print('Risk:   \t{:.2f}\tUSDT ({:.2f}%)'.format(risk, percent_risk))
 
 
 if __name__ == '__main__':
