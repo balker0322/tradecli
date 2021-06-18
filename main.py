@@ -4,7 +4,9 @@ from tradeinterface import *
 from tradecalc import *
 
 
-def update_user_params(pair, e, sl, rp, rv):
+def update_user_params(pr='', e=0.0, sl=0.0, rp=0.0, rv=0.0):
+    if not pr == '':
+        set_pair(pr)
     if not rp == 0.0:
         set_risk_as_percent(rp)
     if not sl == 0.0:
@@ -14,9 +16,21 @@ def update_user_params(pair, e, sl, rp, rv):
     if (not rp == 0.0):
         set_risk_as_percent(rp)
 
-@click.group()
-def main():
-    pass
+# @click.group()
+# @click.option('-pr',default='')
+# @click.option('-e',default=0.0)
+# @click.option('-sl',default=0.0)
+# @click.option('-rp',default=0.0)
+# @click.option('-rv',default=0.0)
+# def main(pr, e, sl, rp, rv):
+#     print('q is {}'.format(q))
+#     pass
+
+# @click.group()
+# @click.option('-q',default=0.0)
+# def main(q):
+#     print('q is {}'.format(q))
+#     pass
 
 # # for experiment
 # @main.command()
@@ -29,26 +43,33 @@ def main():
 #     print('c1', c1)
 #     print('c2', c2)
 
-# Set Capital
 @main.command()
-@click.argument('c1')
-@click.argument('c2', default=0.0)
-@click.argument('c3', default=0.0)
-def c(c1, c2, c3):
-    '''
-    Set Capital Price in USDT. Risk percentage is be based on this price.
-    '''
-    capital = float(c1) + float(c2) + float(c3)
-    set_capital(capital)
+# @click.option('--capital', '-c', multiple=True)
+@click.argument('c', multiple=True)
+def capital(c):
+    print(c)
+
+
+# # Set Capital
+# @main.command()
+# @click.argument('c1')
+# @click.argument('c2', default=0.0)
+# @click.argument('c3', default=0.0)
+# def c(c1, c2, c3):
+#     '''
+#     Set Capital Price in USDT. Risk percentage is be based on this price.
+#     '''
+#     capital = float(c1) + float(c2) + float(c3)
+#     set_capital(capital)
 
 # set pair
 @main.command()
-@click.argument('pair')
-def pair:
+@click.argument('pr')
+def pr(pr):
     '''
     Set Pair
     '''
-    set_pair(pair.upper())
+    set_pair(pr.upper())
 
 # Set Risk Percentage
 @main.command()
@@ -99,8 +120,7 @@ def ps(pair, p):
 
 # Market Long Entry
 @main.command()
-@click.option('-pair',default='')
-@click.option('-e',default=0.0)
+@click.option('-pr',default='')
 @click.option('-e',default=0.0)
 @click.option('-sl',default=0.0)
 @click.option('-rp',default=0.0)
@@ -127,6 +147,7 @@ def mshort(pair, e, sl, rp, rv):
     Market Short Entry
     '''
     update_user_params(pair, e, sl, rp, rv)
+    position_size = get_position_size(pair)
     position_size = get_position_size(pair)
     market_short_entry(pair, position_size)
 
