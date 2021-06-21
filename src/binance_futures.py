@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import time
 #import threading
 
-import pandas as pd
+# import pandas as pd
 from bravado.exception import HTTPNotFound
 from pytz import UTC
 
@@ -884,50 +884,51 @@ class BinanceFutures:
         :param start_time: start time
         :param end_time: end time
         :return:
-        """        
-        self.__init_client()        
-        fetch_bin_size = allowed_range[bin_size][0]
-        left_time = start_time
-        right_time = end_time
-        data = to_data_frame([])
+        """    
+        pass    
+        # self.__init_client()        
+        # fetch_bin_size = allowed_range[bin_size][0]
+        # left_time = start_time
+        # right_time = end_time
+        # data = to_data_frame([])
 
-        while True:
-            if left_time > right_time:
-                break
-            logger.info(f"fetching OHLCV data")
-            left_time_to_timestamp = int(datetime.timestamp(left_time)*1000)
-            right_time_to_timestamp = int(datetime.timestamp(right_time)*1000)            
+        # while True:
+        #     if left_time > right_time:
+        #         break
+        #     logger.info(f"fetching OHLCV data")
+        #     left_time_to_timestamp = int(datetime.timestamp(left_time)*1000)
+        #     right_time_to_timestamp = int(datetime.timestamp(right_time)*1000)            
 
-            source = retry(lambda: self.client.futures_klines(symbol=self.pair, interval=fetch_bin_size,
-                                                                              startTime=left_time_to_timestamp, endTime=right_time_to_timestamp,
-                                                                              limit=1500))
-            if len(source) == 0:
-                break
+        #     source = retry(lambda: self.client.futures_klines(symbol=self.pair, interval=fetch_bin_size,
+        #                                                                       startTime=left_time_to_timestamp, endTime=right_time_to_timestamp,
+        #                                                                       limit=1500))
+        #     if len(source) == 0:
+        #         break
             
-            source_to_object_list =[]
+        #     source_to_object_list =[]
            
-            for s in source:   
-                timestamp_to_datetime = datetime.fromtimestamp(s[6]/1000).astimezone(UTC)               
-                source_to_object_list.append({
-                        "timestamp" : timestamp_to_datetime,
-                        "high" : float(s[2]),
-                        "low" : float(s[3]),
-                        "open" : float(s[1]),
-                        "close" : float(s[4]),
-                        "volume" : float(s[5])
-                    })
+        #     for s in source:   
+        #         timestamp_to_datetime = datetime.fromtimestamp(s[6]/1000).astimezone(UTC)               
+        #         source_to_object_list.append({
+        #                 "timestamp" : timestamp_to_datetime,
+        #                 "high" : float(s[2]),
+        #                 "low" : float(s[3]),
+        #                 "open" : float(s[1]),
+        #                 "close" : float(s[4]),
+        #                 "volume" : float(s[5])
+        #             })
                                    
-            source = to_data_frame(source_to_object_list)
+        #     source = to_data_frame(source_to_object_list)
 
-            data = pd.concat([data, source])
+        #     data = pd.concat([data, source])
                        
-            if right_time > source.iloc[-1].name + delta(fetch_bin_size):
-                left_time = source.iloc[-1].name + delta(fetch_bin_size)
-                time.sleep(2)                
-            else:                
-                break
+        #     if right_time > source.iloc[-1].name + delta(fetch_bin_size):
+        #         left_time = source.iloc[-1].name + delta(fetch_bin_size)
+        #         time.sleep(2)                
+        #     else:                
+        #         break
         
-        return resample(data, bin_size)        
+        # return resample(data, bin_size)        
 
     def security(self, bin_size):
         """
