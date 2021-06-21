@@ -265,6 +265,7 @@ def stat():
     
     entryPrice = position['entryPrice']
     positionAmt = position['positionAmt']
+    print()
     print('Position:')
     print('entry:\t{} USDT'.format(entryPrice))
     print('qty:\t{} {}'.format(positionAmt, pair[-4:]))
@@ -275,26 +276,28 @@ def stat():
     capital = get_capital()
 
     if sl_list:
+        print()
         print('SL:')
-        print('{}\t{}\t{}'.format('price','qty','pnl'))
+        print('{}\t\t{}\t\t{}'.format('price','qty','pnl'))
         for sl in sl_list:
             price = sl['stopPrice']
             qty = sl['origQty']
             pnl = calc_percent_pnl(entryPrice, positionAmt, price, capital)
-            pnl = '{0}{1:.2f}%'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
-            print('{} USDT\t{} {}\t{}'.format(price,qty,pair[-4:],pnl))
+            pnl = '{0}{1:.2f} %'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
+            print('{} USDT\t{} {}\t\t{}'.format(price,qty,pair[:-4],pnl))
     else:
         print('SL: No set Stop Loss')
 
     if tp_list:
+        print()
         print('TP:')
-        print('{}\t{}\t{}'.format('price','qty','pnl'))
-        for sl in sl_list:
-            price = sl['price']
-            qty = sl['origQty']
-            pnl = calc_percent_pnl(entryPrice, positionAmt, price, capital)
-            pnl = '{0}{1:.2f}%'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
-            print('{} USDT\t{} {}\t{}'.format(price,qty,pair[-4:],pnl))
+        print('{}\t\t{}\t\t{}'.format('price','qty','pnl'))
+        for tp in tp_list:
+            price = tp['price']
+            qty = tp['origQty']
+            pnl = calc_percent_pnl(entryPrice, tp['origQty'], price, capital)
+            pnl = '{0}{1:.2f} %'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
+            print('{} USDT\t{} {}\t\t{}'.format(price,qty,pair[:-4],pnl))
     else:
         print('TP: No set Take Profit')
 
