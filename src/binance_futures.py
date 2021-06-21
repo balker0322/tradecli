@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import time
 #import threading
 
-# import pandas as pd
+import pandas as pd
 from bravado.exception import HTTPNotFound
 from pytz import UTC
 
@@ -884,51 +884,50 @@ class BinanceFutures:
         :param start_time: start time
         :param end_time: end time
         :return:
-        """    
-        pass    
-        # self.__init_client()        
-        # fetch_bin_size = allowed_range[bin_size][0]
-        # left_time = start_time
-        # right_time = end_time
-        # data = to_data_frame([])
+        """        
+        self.__init_client()        
+        fetch_bin_size = allowed_range[bin_size][0]
+        left_time = start_time
+        right_time = end_time
+        data = to_data_frame([])
 
-        # while True:
-        #     if left_time > right_time:
-        #         break
-        #     logger.info(f"fetching OHLCV data")
-        #     left_time_to_timestamp = int(datetime.timestamp(left_time)*1000)
-        #     right_time_to_timestamp = int(datetime.timestamp(right_time)*1000)            
+        while True:
+            if left_time > right_time:
+                break
+            logger.info(f"fetching OHLCV data")
+            left_time_to_timestamp = int(datetime.timestamp(left_time)*1000)
+            right_time_to_timestamp = int(datetime.timestamp(right_time)*1000)            
 
-        #     source = retry(lambda: self.client.futures_klines(symbol=self.pair, interval=fetch_bin_size,
-        #                                                                       startTime=left_time_to_timestamp, endTime=right_time_to_timestamp,
-        #                                                                       limit=1500))
-        #     if len(source) == 0:
-        #         break
+            source = retry(lambda: self.client.futures_klines(symbol=self.pair, interval=fetch_bin_size,
+                                                                              startTime=left_time_to_timestamp, endTime=right_time_to_timestamp,
+                                                                              limit=1500))
+            if len(source) == 0:
+                break
             
-        #     source_to_object_list =[]
+            source_to_object_list =[]
            
-        #     for s in source:   
-        #         timestamp_to_datetime = datetime.fromtimestamp(s[6]/1000).astimezone(UTC)               
-        #         source_to_object_list.append({
-        #                 "timestamp" : timestamp_to_datetime,
-        #                 "high" : float(s[2]),
-        #                 "low" : float(s[3]),
-        #                 "open" : float(s[1]),
-        #                 "close" : float(s[4]),
-        #                 "volume" : float(s[5])
-        #             })
+            for s in source:   
+                timestamp_to_datetime = datetime.fromtimestamp(s[6]/1000).astimezone(UTC)               
+                source_to_object_list.append({
+                        "timestamp" : timestamp_to_datetime,
+                        "high" : float(s[2]),
+                        "low" : float(s[3]),
+                        "open" : float(s[1]),
+                        "close" : float(s[4]),
+                        "volume" : float(s[5])
+                    })
                                    
-        #     source = to_data_frame(source_to_object_list)
+            source = to_data_frame(source_to_object_list)
 
-        #     data = pd.concat([data, source])
+            data = pd.concat([data, source])
                        
-        #     if right_time > source.iloc[-1].name + delta(fetch_bin_size):
-        #         left_time = source.iloc[-1].name + delta(fetch_bin_size)
-        #         time.sleep(2)                
-        #     else:                
-        #         break
+            if right_time > source.iloc[-1].name + delta(fetch_bin_size):
+                left_time = source.iloc[-1].name + delta(fetch_bin_size)
+                time.sleep(2)                
+            else:                
+                break
         
-        # return resample(data, bin_size)        
+        return resample(data, bin_size)        
 
     def security(self, bin_size):
         """
@@ -940,70 +939,69 @@ class BinanceFutures:
         """
         get OHLCV data and execute the strategy
         """    
-        pass
-        # if self.data is None:
-        #     end_time = datetime.now(timezone.utc)
-        #     start_time = end_time - self.ohlcv_len * delta(self.bin_size)
-        #     #logger.info(f"start time fetch ohlcv: {start_time}")
-        #     #logger.info(f"end time fetch ohlcv: {end_time}")
-        #     d1 = self.fetch_ohlcv(self.bin_size, start_time, end_time)
-        #     if len(d1) > 0:
-        #         d2 = self.fetch_ohlcv(allowed_range[self.bin_size][0],
-        #                               d1.iloc[-1].name + delta(allowed_range[self.bin_size][0]), end_time)
+        if self.data is None:
+            end_time = datetime.now(timezone.utc)
+            start_time = end_time - self.ohlcv_len * delta(self.bin_size)
+            #logger.info(f"start time fetch ohlcv: {start_time}")
+            #logger.info(f"end time fetch ohlcv: {end_time}")
+            d1 = self.fetch_ohlcv(self.bin_size, start_time, end_time)
+            if len(d1) > 0:
+                d2 = self.fetch_ohlcv(allowed_range[self.bin_size][0],
+                                      d1.iloc[-1].name + delta(allowed_range[self.bin_size][0]), end_time)
 
-        #         self.data = pd.concat([d1, d2])                
-        #     else:
-        #         self.data = d1
+                self.data = pd.concat([d1, d2])                
+            else:
+                self.data = d1
                 
-        # else:
-        #     self.data = pd.concat([self.data, new_data])  
+        else:
+            self.data = pd.concat([self.data, new_data])  
 
-        # """ 
-        # # exclude current candle data 
-        # re_sample_data = resample(self.data, self.bin_size)[:-1]
+        """ 
+        # exclude current candle data 
+        re_sample_data = resample(self.data, self.bin_size)[:-1]
        
-        # if self.data.iloc[-1].name == re_sample_data.iloc[-1].name:
-        #     self.data = re_sample_data.iloc[-1 * self.ohlcv_len:, :]
+        if self.data.iloc[-1].name == re_sample_data.iloc[-1].name:
+            self.data = re_sample_data.iloc[-1 * self.ohlcv_len:, :]
 
-        # if self.last_action_time is not None and \
-        #         self.last_action_time == re_sample_data.iloc[-1].name:
-        #     return
-        #  """
+        if self.last_action_time is not None and \
+                self.last_action_time == re_sample_data.iloc[-1].name:
+            return
+         """
 
-        # # print(self.data['close'].iloc[-1])
+        # print(self.data['close'].iloc[-1])
         
-        # # experiment
-        # re_sample_data = resample(self.data, self.bin_size)
-        # self.data = re_sample_data.iloc[-1 * self.ohlcv_len:, :]
-        # if self.last_action_time is not None and \
-        #         self.last_action_time == re_sample_data.iloc[-1].name:
-        #     return
+        # experiment
+        re_sample_data = resample(self.data, self.bin_size)
+        self.data = re_sample_data.iloc[-1 * self.ohlcv_len:, :]
+        if self.last_action_time is not None and \
+                self.last_action_time == re_sample_data.iloc[-1].name:
+            return
         
 
-        # open = re_sample_data['open'].values
-        # close = re_sample_data['close'].values
-        # high = re_sample_data['high'].values
-        # low = re_sample_data['low'].values
-        # volume = re_sample_data['volume'].values        
+        open = re_sample_data['open'].values
+        close = re_sample_data['close'].values
+        high = re_sample_data['high'].values
+        low = re_sample_data['low'].values
+        volume = re_sample_data['volume'].values        
 
-        # try:
-        #     if self.strategy is not None:                
-        #         self.strategy(open, close, high, low, volume)                
-        #     self.last_action_time = re_sample_data.iloc[-1].name
-        # except FatalError as e:
-        #     # Fatal error
-        #     logger.error(f"Fatal error. {e}")
-        #     logger.error(traceback.format_exc())
+        try:
+            if self.strategy is not None:                
+                self.strategy(open, close, high, low, volume)                
+            self.last_action_time = re_sample_data.iloc[-1].name
+        except FatalError as e:
+            # Fatal error
+            logger.error(f"Fatal error. {e}")
+            logger.error(traceback.format_exc())
 
-        #     notify(f"Fatal error occurred. Stopping Bot. {e}")
-        #     notify(traceback.format_exc())
-        #     self.stop()
-        # except Exception as e:
-        #     logger.error(f"An error occurred. {e}")
-        #     logger.error(traceback.format_exc())
+            notify(f"Fatal error occurred. Stopping Bot. {e}")
+            notify(traceback.format_exc())
+            self.stop()
+        except Exception as e:
+            logger.error(f"An error occurred. {e}")
+            logger.error(traceback.format_exc())
 
-        #     notify(f"An error occurred. {e}")
-        #     notify(traceback.format_exc())
+            notify(f"An error occurred. {e}")
+            notify(traceback.format_exc())
    
     def __on_update_instrument(self, action, instrument):
         """
