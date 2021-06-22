@@ -2,7 +2,7 @@ from decimal import Decimal as d
 
 RISK = '0.05'
 RR_RATIO = '2.0'
-K_FACTOR = '1.0007'
+K_FACTOR = '1.0006'
 
 
 def calc_position_size(entry_price, stop_loss_price, min_lot_size, risk=RISK, k_factor=K_FACTOR):

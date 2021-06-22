@@ -89,6 +89,7 @@ def llong():
     '''
     Limit Long Entry
     '''
+    pair = get_pair()
     position_size = get_position_size(pair)
     entry_price = get_target_entry(pair)
     limit_long_entry(pair, position_size, entry_price)
@@ -182,6 +183,41 @@ def co():
 
 # Submit SL and TP
 @main.command()
+def autosltp():
+    '''
+    Submit SL and TP
+    '''
+    pair = get_pair()
+    # position = float(get_open_position(pair)['positionAmt'])
+    position = get_position_size(pair)
+    # if position == 0.0:
+    #     print('No open position for {} pair'.format(pair))
+    #     return
+    
+    min_lot_size = get_min_lot_size(pair)
+    tp_list = get_take_profit(pair)
+    sl_price = get_target_stop_loss(pair)
+    tp_count = len(tp_list)
+    tp_targets = []
+    total_pos_size_set = 0.0
+
+    for i, tp in enumerate(tp_list):
+        tp_pos_size = round_param(abs(position)/float(tp_count),min_lot_size)
+        if i == tp_count - 1.0:
+            tp_pos_size = abs(position) - total_pos_size_set
+        tp_targets.append({
+            'price':tp,
+            'position_size':tp_pos_size,
+        })
+        total_pos_size_set += float(tp_pos_size)
+    
+    # set_sl(pair,sl_price)
+    # set_mul_tp(pair,tp_targets)
+    auto_sltp(pair, sl_price, tp_targets)
+
+
+# Submit SL and TP
+@main.command()
 def sltp():
     '''
     Submit SL and TP
@@ -245,6 +281,7 @@ def stat():
     Show current status
     '''
     pair = get_pair()
+    market_price = get_market_price(pair)
     print('========================================')
     print('Capital: {} USDT'.format(get_capital()))
     print('Risk: {0:.2f}%'.format(get_risk_as_percent()*100.0))
@@ -255,25 +292,29 @@ def stat():
     print('Entry Position Size: {} {}'.format(get_position_size(pair),pair[:-4]))
     print('Max Position Size:   {} {}'.format(get_max_position_size(pair),pair[:-4]))
     print()
-    print('Market Price: {} USDT'.format(get_market_price(pair)))
+    print('Market Price: {} USDT'.format(market_price))
 
     position = get_open_position(pair)
     if float(position['positionAmt']) == 0.0:
         print('Position: None')
         print('========================================')
         return
+
+    capital = get_capital()
     
     entryPrice = position['entryPrice']
     positionAmt = position['positionAmt']
     print()
     print('Position:')
     print('entry:\t{} USDT'.format(entryPrice))
-    print('qty:\t{} {}'.format(positionAmt, pair[-4:]))
+    print('qty:\t{} {}'.format(positionAmt, pair[:-4]))
+    pnl = calc_percent_pnl(entryPrice, positionAmt, market_price, capital)
+    pnl = '{0}{1:.2f} %'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
+    print('pnl:\t{}'.format(pnl))
 
     sl_list = get_sl_order(pair)
     tp_list = get_tp_order(pair)
 
-    capital = get_capital()
 
     if sl_list:
         print()

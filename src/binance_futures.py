@@ -1186,6 +1186,8 @@ class BinanceFutures:
 
         if not total_tp_pos_size == total_position_size:
             print('not total_tp_pos_size == total_position_size')
+            print('total_tp_pos_size = {}'.format(total_tp_pos_size))
+            print('total_position_size = {}'.format(total_position_size))
             return
 
         # tp

@@ -1,6 +1,8 @@
 from src.binance_futures import BinanceFutures
+from src.binance_futures_websocket import BinanceFuturesWs
 from tradecalc import *
 from model import *
+import time
 
 BINANCE_ACCOUNT = 'binanceaccount2'
 
@@ -109,6 +111,20 @@ def get_tp_order(pair):
 def get_sl_order(pair):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
     return exchange.get_sl_order()
+
+def auto_sltp(pair, sl, tp_targets):
+
+    exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
+    
+    def set_sltp(*args, **kwargs):
+        exchange.set_sl(sl)
+        exchange.set_mul_tp(tp_targets)
+    
+    exchange.ws = BinanceFuturesWs(account=exchange.account, pair=exchange.pair, test=exchange.demo)
+    exchange.ws.bind('position',set_sltp)
+
+    while True:
+        time.sleep(1)
 
 
 
