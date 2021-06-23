@@ -49,6 +49,11 @@ def main(**kwargs):
 @click.option('-q', multiple=True)
 def exp(q):
     print(q)
+    
+# experiment
+@main.command()
+def init():
+    init_pair_info()
 
 # Set Capital
 @main.command()
