@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import time
 #import threading
 
-import pandas as pd
+# import pandas as pd
 from bravado.exception import HTTPNotFound
 from pytz import UTC
 

@@ -7,10 +7,10 @@ import time
 import uuid
 from datetime import timedelta
 
-import numpy as np
-import pandas as pd
+# import numpy as np
+# import pandas as pd
 import requests
-import talib
+# import talib
 from bravado.exception import HTTPError
 
 from src.config import config as conf
