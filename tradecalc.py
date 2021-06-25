@@ -90,8 +90,8 @@ def short_sl(entry_price, position_size, min_price_step, risk=RISK, k_factor=K_F
 def round_param(param_size, min_param_step):
     return d(param_size) - (d(param_size)%d(min_param_step))
 
-def calc_percent_pnl(entry_price, position_size, exit_price, capital, k_factor=K_FACTOR):
-    if float(position_size) > 0.0:
+def calc_percent_pnl(entry_price, position_size, exit_price, capital, side='LONG', k_factor=K_FACTOR):
+    if side=='LONG':
         return long_percent_pnl(entry_price, position_size, exit_price, capital, k_factor)
     return short_percent_pnl(entry_price, position_size, exit_price, capital, k_factor)
 

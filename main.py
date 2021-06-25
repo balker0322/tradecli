@@ -309,11 +309,12 @@ def stat():
     
     entryPrice = position['entryPrice']
     positionAmt = position['positionAmt']
+    side = 'LONG' if float(positionAmt) > 0.0 else 'SHORT'
     print()
     print('Position:')
     print('entry:\t{} USDT'.format(entryPrice))
     print('qty:\t{} {}'.format(positionAmt, pair[:-4]))
-    pnl = calc_percent_pnl(entryPrice, positionAmt, market_price, capital)
+    pnl = calc_percent_pnl(entryPrice, positionAmt, market_price, capital, side)
     pnl = '{0}{1:.2f} %'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
     print('pnl:\t{}'.format(pnl))
 
@@ -328,7 +329,7 @@ def stat():
         for sl in sl_list:
             price = sl['stopPrice']
             qty = sl['origQty']
-            pnl = calc_percent_pnl(entryPrice, positionAmt, price, capital)
+            pnl = calc_percent_pnl(entryPrice, qty, price, capital, side)
             pnl = '{0}{1:.2f} %'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
             print('{} USDT\t{} {}\t\t{}'.format(price,qty,pair[:-4],pnl))
     else:
@@ -341,7 +342,7 @@ def stat():
         for tp in tp_list:
             price = tp['price']
             qty = tp['origQty']
-            pnl = calc_percent_pnl(entryPrice, tp['origQty'], price, capital)
+            pnl = calc_percent_pnl(entryPrice, tp['origQty'], price, capital, side)
             pnl = '{0}{1:.2f} %'.format('+' if pnl > 0.0 else ' ' if pnl == 0.0 else '',pnl*100.0)
             print('{} USDT\t{} {}\t\t{}'.format(price,qty,pair[:-4],pnl))
     else:
