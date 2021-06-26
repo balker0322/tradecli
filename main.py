@@ -42,7 +42,8 @@ def update_user_params(**kwargs):
 @click.option('-rp',default=0.0)
 @click.option('-rv',default=0.0)
 def main(**kwargs):
-    update_user_params(**kwargs)
+    pass
+    # update_user_params(**kwargs)
 
 # experiment
 @main.command()
