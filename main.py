@@ -53,6 +53,7 @@ def exp(q):
 # experiment
 @main.command()
 def init():
+    print('try')
     init_pair_info(get_pair_info())
 
 # Set Capital
