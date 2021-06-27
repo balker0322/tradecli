@@ -268,8 +268,11 @@ def calcrr():
     rr_ratio = ['-1','0','1','2','3','4']
     side = 'LONG' if target_exit < target_entry else 'SHORT'
     print('========================================')
-    print(pair)
-    print('{} ENTRY: {} USDT'.format(side,target_entry))
+    print('Pair: {}'.format(pair))
+    print('Target Entry:        {} USDT'.format(get_target_entry(pair)))
+    print('Target Stop Loss:    {} USDT'.format(get_target_stop_loss(pair)))
+    print('Entry Position Size: {} {}'.format(get_position_size(pair),pair[:-4]))
+    print('Max Position Size:   {} {}'.format(get_max_position_size(pair),pair[:-4]))
     for rr in rr_ratio:
         price = calc_exit_price(entry_price=target_entry, stop_loss_price=target_exit, min_price_step=min_price_step, rr_ratio=rr)
         s = 'RR_RATIO: {:.1f}'.format(float(rr)) if float(rr) > 0.0 else ('STOP LOSS' if float(rr) < 0.0 else 'BREAKEVEN')
