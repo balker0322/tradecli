@@ -229,27 +229,29 @@ def sltp():
     Submit SL and TP
     '''
     pair = get_pair()
-    position = float(get_open_position(pair)['positionAmt'])
-    if position == 0.0:
+    position = get_open_position(pair)['positionAmt']
+    if float(position) == 0.0:
         print('No open position for {} pair'.format(pair))
         return
     
     min_lot_size = get_min_lot_size(pair)
     tp_list = get_take_profit(pair)
+    tp_list.sort()
     sl_price = get_target_stop_loss(pair)
     tp_count = len(tp_list)
     tp_targets = []
-    total_pos_size_set = 0.0
+    # total_pos_size_set = 0.0
+    tp_pos_size = split_position(position, tp_count, min_lot_size)
 
     for i, tp in enumerate(tp_list):
-        tp_pos_size = round_param(abs(position)/float(tp_count),min_lot_size)
-        if i == tp_count - 1.0:
-            tp_pos_size = abs(position) - total_pos_size_set
+        # tp_pos_size = round_param(abs(position)/float(tp_count),min_lot_size)
+        # if i == tp_count - 1.0:
+        #     tp_pos_size = abs(position) - total_pos_size_set
         tp_targets.append({
             'price':tp,
-            'position_size':tp_pos_size,
+            'position_size':tp_pos_size[i],
         })
-        total_pos_size_set += float(tp_pos_size)
+        # total_pos_size_set += float(tp_pos_size)
     
     set_sl(pair,sl_price)
     set_mul_tp(pair,tp_targets)

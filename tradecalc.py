@@ -88,7 +88,9 @@ def short_sl(entry_price, position_size, min_price_step, risk=RISK, k_factor=K_F
     return float(round_param(sl, min_price_step))
 
 def round_param(param_size, min_param_step):
-    return d(param_size) - (d(param_size)%d(min_param_step))
+    param_size_str = str(param_size)
+    min_param_step_str = str(min_param_step)
+    return d(param_size_str) - (d(param_size_str)%d(min_param_step_str))
 
 def calc_percent_pnl(entry_price, position_size, exit_price, capital, side='LONG', k_factor=K_FACTOR):
     if side=='LONG':
@@ -108,6 +110,19 @@ def short_percent_pnl(entry_price, position_size, exit_price, capital, k_factor=
     risk = risk*abs(d(position_size))
     risk = risk / d(capital)
     return float(risk)
+
+def split_position(total, split_count, min_lot_size):
+    position_list = []
+    # remaining = round_param(total, min_lot_size)
+    remaining = d(total) % d(min_lot_size*float(split_count))
+    total_excess = int((remaining / d(min_lot_size))+d(0.5))
+    print(total_excess)
+    for i in range(split_count):
+        position_item = round_param(float(total)/float(split_count), min_lot_size)
+        if i < total_excess:
+            position_item += d(min_lot_size)
+        position_list.append(float(position_item))
+    return position_list
 
 if __name__ == "__main__":
     print(short_sl('36000.0', '0.0321', '0.1'))
