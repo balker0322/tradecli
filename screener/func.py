@@ -1,8 +1,8 @@
 from binance.client import Client
-import ta
+# import ta
 import pandas as pd
 # from src import conf
-from .conf import config
+from src.config import config
 
 api_key = config['binance_keys']['binanceaccount1']['API_KEY']
 api_secret = config['binance_keys']['binanceaccount1']['SECRET_KEY']
@@ -22,7 +22,11 @@ def historical_klines(pair, interval, num_period):
     return client.get_historical_klines(pair, interval, history)
 
 def get_all_pairs():
-    return client.get_exchange_info()
+    '''
+    Get all USDT pairs
+    '''
+    exchange_info = client.get_exchange_info()
+    return [symbol_info['symbol'] for symbol_info in exchange_info['symbols'] if symbol_info['symbol'][-4:]=='USDT']
 
 
 if __name__ == '__main__':
