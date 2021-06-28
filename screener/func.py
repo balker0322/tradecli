@@ -1,10 +1,11 @@
 from binance.client import Client
 import ta
 import pandas as pd
-from src import conf
+# from src import conf
+from .conf import config
 
-api_key = conf['binanceaccount1']['API_KEY']
-api_secret = conf['binanceaccount1']['SECRET_KEY']
+api_key = config['binance_keys']['binanceaccount1']['API_KEY']
+api_secret = config['binance_keys']['binanceaccount1']['SECRET_KEY']
 client = Client(api_key, api_secret)
 unit = dict()
 unit['m'] = 'min'
