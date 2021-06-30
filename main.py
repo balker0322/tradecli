@@ -150,6 +150,36 @@ def tp(tp_list):
         take_profit_list.append(round_param(tp, min_price_step))
     set_take_profit(pair, take_profit_list)
 
+@main.command()
+def slr():
+    '''
+    Set stop loss based risk percentage
+    '''
+    pair = get_pair()
+    position = get_open_position(pair)
+    positionAmt = position['positionAmt']
+    if float(positionAmt) == 0.0:
+        print('No open position for {} pair'.format(pair))
+        return
+    side = 'LONG' if float(positionAmt) > 0.0 else 'SHORT'
+    market_price = get_market_price(pair)
+    entryPrice = position['entryPrice']
+
+    price = entryPrice
+    if side=='LONG' and float(market_price) > float(entryPrice):
+        price =  market_price
+    if side=='SHORT' and float(market_price) < float(entryPrice):
+        price = market_price
+
+    sl = calc_pnl_exit_price(
+        entry_price=price,
+        position=positionAmt,
+        min_price_step=get_min_price_step(pair),
+        pnl=get_risk()
+    )
+    # print('calculated sl is {}'.format(sl))
+    set_target_stop_loss(pair, sl)
+    set_sl(pair,sl)
 
 # Set take profit as rr ratio
 @main.command()
