@@ -153,7 +153,7 @@ def tp(tp_list):
 @main.command()
 def slr():
     '''
-    Set stop loss based risk percentage
+    Set stop loss based on risk percentage
     '''
     pair = get_pair()
     position = get_open_position(pair)
