@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import time
 #import threading
 
-# import pandas as pd
+import pandas as pd
 from bravado.exception import HTTPNotFound
 from pytz import UTC
 
@@ -95,6 +95,7 @@ class BinanceFutures:
         self.pair = pair
         self.demo = demo
         self.is_running = threading
+        self.on_position_change = None
         
     def __init_client(self):
         """
@@ -939,6 +940,14 @@ class BinanceFutures:
         """
         get OHLCV data and execute the strategy
         """    
+        open = new_data['open'].iloc[0]
+        close = new_data['close'].iloc[0]
+        high = new_data['high'].iloc[0]
+        low = new_data['low'].iloc[0]
+        volume = new_data['volume'].iloc[0]  
+        self.strategy(open, close, high, low, volume) 
+        return
+
         if self.data is None:
             end_time = datetime.now(timezone.utc)
             start_time = end_time - self.ohlcv_len * delta(self.bin_size)
@@ -1082,9 +1091,17 @@ class BinanceFutures:
         self.entry_price = float(self.position[0]['entryPrice'])        
     
         # Evaluation of profit and loss
-        self.eval_exit()
+        # self.eval_exit()
         # self.eval_sltp()
-        self.eval_rm_sltp()
+        # self.eval_rm_sltp()
+        if self.on_position_change is not None:
+            self.on_position_change(
+                position_size = self.position[0]['positionAmt'],
+                entry_price = self.position[0]['entryPrice']
+            )
+    
+    def set_on_position_change(self, on_position_change_handler):
+        self.on_position_change = on_position_change_handler
 
     def __on_update_margin(self, action, margin):
         """

@@ -2,6 +2,7 @@ import click
 from model import *
 from tradeinterface import *
 from tradecalc import *
+import src.strategy as strategy
 
 
 def update_user_params(**kwargs):
@@ -385,6 +386,28 @@ def stat():
         print('TP: No set Take Profit')
 
     print('========================================')
+
+
+
+@main.command()
+def ws():
+    '''
+    start websocket
+    '''
+    cls = getattr(strategy, 'statdisp')
+    bot = cls()
+    bot.test_net  = False
+    bot.back_test = False
+    bot.stub_test = False
+    bot.hyperopt  = False
+    bot.account = 'binanceaccount1'
+    bot.exchange_arg = 'binance'
+    bot.pair = 'XRPUSDT'
+    bot.run()
+
+    # signal.signal(signal.SIGINT, lambda x, y: bot.stop())
+    while True:
+        time.sleep(1)
 
 
 if __name__ == '__main__':

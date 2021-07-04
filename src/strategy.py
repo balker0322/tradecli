@@ -20,7 +20,7 @@ from src.sltp_calc import *
 
 
 # Channel breakout strategy
-from src.gmail_sub import GmailSub
+# from src.gmail_sub import GmailSub
 
 def get_calc_lot(lot, decimal_num:int, leverage:float, actual_leverage:float):
     calc_lot = lot / leverage
@@ -210,71 +210,71 @@ class OCC(Bot):
 
         self.eval_time = source.iloc[-1].name
 
-# TradingView
-class TV(Bot):
-    subscriber = None
+# # TradingView
+# class TV(Bot):
+#     subscriber = None
 
-    def __init__(self):
-        Bot.__init__(self, '1m')
+#     def __init__(self):
+#         Bot.__init__(self, '1m')
 
-        user_id = os.environ.get("GMAIL_ADDRESS")
-        if user_id is None:
-            raise Exception("Please set GMAIL_ADDRESS into env to use Trading View Strategy.")
-        self.subscriber = GmailSub(user_id)
-        self.subscriber.set_from_address('noreply@tradingview.com')
+#         user_id = os.environ.get("GMAIL_ADDRESS")
+#         if user_id is None:
+#             raise Exception("Please set GMAIL_ADDRESS into env to use Trading View Strategy.")
+#         self.subscriber = GmailSub(user_id)
+#         self.subscriber.set_from_address('noreply@tradingview.com')
 
-    def __on_message(self, messages):
-        for message in messages:
-            if 'payload' not in message:
-                continue
-            if 'headers' not in message['payload']:
-                continue
-            subject_list = [header['value']
-                       for header in message['payload']['headers'] if header['name'] == 'Subject']
-            if len(subject_list) == 0:
-                continue
-            subject = subject_list[0]
-            if subject.startswith('TradingViewアラート:'):
-                action = subject.replace('TradingViewアラート:', '')
-                self.__action(action)
+#     def __on_message(self, messages):
+#         for message in messages:
+#             if 'payload' not in message:
+#                 continue
+#             if 'headers' not in message['payload']:
+#                 continue
+#             subject_list = [header['value']
+#                        for header in message['payload']['headers'] if header['name'] == 'Subject']
+#             if len(subject_list) == 0:
+#                 continue
+#             subject = subject_list[0]
+#             if subject.startswith('TradingViewアラート:'):
+#                 action = subject.replace('TradingViewアラート:', '')
+#                 self.__action(action)
 
-    def __action(self, action):
-        lot = self.exchange.get_lot()
-        if re.search('buy', action, re.IGNORECASE):
-            self.exchange.entry('Long', True, lot)
-        elif re.search('sell', action, re.IGNORECASE):
-            self.exchange.entry('Short', True, lot)
-        elif re.search('exit', action, re.IGNORECASE):
-            self.exchange.close_all()
+#     def __action(self, action):
+#         lot = self.exchange.get_lot()
+#         if re.search('buy', action, re.IGNORECASE):
+#             self.exchange.entry('Long', True, lot)
+#         elif re.search('sell', action, re.IGNORECASE):
+#             self.exchange.entry('Short', True, lot)
+#         elif re.search('exit', action, re.IGNORECASE):
+#             self.exchange.close_all()
 
-    def run(self):
-        if self.hyperopt:
-            raise Exception("Trading View Strategy dose not support hyperopt Mode.")
-        elif self.back_test:
-            raise Exception("Trading View Strategy dose not support backtest Mode.")
-        elif self.stub_test:
-            # if you want to use binance futures
-            # self.exchange = BinanceFuturesStub(account=self.account, pair=self.pair)
-            self.exchange = BitMexStub(account=self.account, pair=self.pair)
-            logger.info(f"Bot Mode : Stub")
-        else:
-            # if you want to use binance
-            #self.exchange = BinanceFutures(account=self.account, pair=self.pair, demo=self.test_net) 
-            self.exchange = BitMex(account=self.account, pair=self.pair, demo=self.test_net)
-            logger.info(f"Bot Mode : Trade")
+#     def run(self):
+#         if self.hyperopt:
+#             raise Exception("Trading View Strategy dose not support hyperopt Mode.")
+#         elif self.back_test:
+#             raise Exception("Trading View Strategy dose not support backtest Mode.")
+#         elif self.stub_test:
+#             # if you want to use binance futures
+#             # self.exchange = BinanceFuturesStub(account=self.account, pair=self.pair)
+#             self.exchange = BitMexStub(account=self.account, pair=self.pair)
+#             logger.info(f"Bot Mode : Stub")
+#         else:
+#             # if you want to use binance
+#             #self.exchange = BinanceFutures(account=self.account, pair=self.pair, demo=self.test_net) 
+#             self.exchange = BitMex(account=self.account, pair=self.pair, demo=self.test_net)
+#             logger.info(f"Bot Mode : Trade")
 
-        logger.info(f"Starting Bot")
-        logger.info(f"Strategy : {type(self).__name__}")
-        logger.info(f"Balance : {self.exchange.get_balance()}")
+#         logger.info(f"Starting Bot")
+#         logger.info(f"Strategy : {type(self).__name__}")
+#         logger.info(f"Balance : {self.exchange.get_balance()}")
 
-        notify(f"Starting Bot\n"
-               f"Strategy : {type(self).__name__}\n"
-               f"Balance : {self.exchange.get_balance()/100000000} XBT")
+#         notify(f"Starting Bot\n"
+#                f"Strategy : {type(self).__name__}\n"
+#                f"Balance : {self.exchange.get_balance()/100000000} XBT")
 
-        self.subscriber.on_message(self.__on_message)
+#         self.subscriber.on_message(self.__on_message)
 
-    def stop(self):
-        self.subscriber.stop()
+#     def stop(self):
+#         self.subscriber.stop()
 
 # candle tester
 
@@ -492,3 +492,31 @@ class AutoSLTP(Bot):
         print('overwrite function')
         print(new_data)
 
+
+
+
+
+class statdisp(Bot):
+    
+    def __init__(self):
+        Bot.__init__(self, '1m')
+        # Bot.set_on_position_change(self, self.on_position_change)
+
+    def strategy(self, open, close, high, low, volume):
+        pass
+        # print('=============')
+        # print('open: {}'.format(open))
+        # print('high: {}'.format(high))
+        # print('low: {}'.format(low))
+        # print('close: {}'.format(close))
+        # print('volume: {}'.format(volume))
+        # print('=============')
+    
+    def plot(self):
+        pass
+
+    def on_position_change(self, position_size, entry_price):
+        print('=============')
+        print('position_size: {}'.format(position_size))
+        print('entry_price: {}'.format(entry_price))
+        print('=============')

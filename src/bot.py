@@ -160,6 +160,10 @@ class Bot:
         self.exchange.ohlcv_len = self.ohlcv_len()
         self.exchange.on_update(self.bin_size, self.strategy)
 
+        # set handler function when position is changed
+        # if self.on_position_change is not None:
+        self.exchange.set_on_position_change(self.on_position_change)
+
         logger.info(f"Starting Bot")
         logger.info(f"Strategy : {type(self).__name__}")
         logger.info(f"Balance : {self.exchange.get_balance()}")
@@ -182,3 +186,7 @@ class Bot:
         self.exchange.stop()
         self.exchange.cancel_all()
         sys.exit()
+    
+
+    def on_position_change(self, position_size, entry_price):
+        pass
