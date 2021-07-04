@@ -406,8 +406,10 @@ def ws():
     bot.run()
 
     # signal.signal(signal.SIGINT, lambda x, y: bot.stop())
-    while True:
-        time.sleep(1)
+    bot.animate_plot.set_label(bot.pair)
+    bot.run_animate_plot()
+    # while True:
+    #     time.sleep(1)
 
 
 if __name__ == '__main__':

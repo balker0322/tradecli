@@ -17,6 +17,8 @@ from src.bitmex_stub import BitMexStub
 from src.binance_futures_stub import BinanceFuturesStub
 from src.bot import Bot
 from src.sltp_calc import *
+from src.plot import AnimatePlot
+from tradecalc import *
 
 
 # Channel breakout strategy
@@ -500,23 +502,58 @@ class statdisp(Bot):
     
     def __init__(self):
         Bot.__init__(self, '1m')
-        # Bot.set_on_position_change(self, self.on_position_change)
+        self.animate_plot = AnimatePlot()
+        self.position_size = None
+        self.entry_price = None
+        self.capital = 10.0
+        self.min_price_step = 0.0001
+    
+    def self_min_price_step(self, min_price_step):
+        self.min_price_step = min_price_step
 
     def strategy(self, open, close, high, low, volume):
-        pass
-        # print('=============')
-        # print('open: {}'.format(open))
-        # print('high: {}'.format(high))
-        # print('low: {}'.format(low))
-        # print('close: {}'.format(close))
-        # print('volume: {}'.format(volume))
-        # print('=============')
+        self.animate_plot.append_y_vals(new_val=float(close))
     
-    def plot(self):
-        pass
+    def run_animate_plot(self):
+        position = self.exchange.get_position()
+        position_size = position['positionAmt']
+        entry_price = position['entryPrice']
+        self.update_markers(123.0, 0.6916)
+        # self.update_markers(position_size, entry_price)
+        self.animate_plot.start_plot()
 
     def on_position_change(self, position_size, entry_price):
-        print('=============')
-        print('position_size: {}'.format(position_size))
-        print('entry_price: {}'.format(entry_price))
-        print('=============')
+        self.animate_plot.clear_markers()
+        self.update_markers(position_size, entry_price)
+    
+    def update_markers(self, position_size, entry_price):
+
+        if not float(position_size) == 0.0:
+
+            pnl_percentage = -0.005
+            price = calc_pnl_exit_price(
+                entry_price=entry_price,
+                position=position_size,
+                min_price_step=self.min_price_step,
+                pnl=pnl_percentage*self.capital
+            )
+            self.animate_plot.add_marker(
+                {
+                    'label':'-0.05%',
+                    'value':price,
+                }
+            )
+
+            pnl_percentage = 0.005
+            price = calc_pnl_exit_price(
+                entry_price=entry_price,
+                position=position_size,
+                min_price_step=self.min_price_step,
+                pnl=pnl_percentage*self.capital
+            )
+            self.animate_plot.add_marker(
+                {
+                    'label':'+0.05%',
+                    'value':price,
+                }
+            )
