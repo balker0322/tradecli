@@ -500,6 +500,12 @@ class AutoSLTP(Bot):
 
 class statdisp(Bot):
     
+    markers = [
+        {'label':' 0.00%', 'pnl_percent': 0.0000, 'color':'gray'},
+        {'label':'+0.50%', 'pnl_percent': 0.0050, 'color':'green'},
+        {'label':'-0.50%', 'pnl_percent':-0.0050, 'color':'red'},
+    ]
+    
     def __init__(self):
         Bot.__init__(self, '1m')
         self.animate_plot = AnimatePlot()
@@ -507,6 +513,12 @@ class statdisp(Bot):
         self.entry_price = None
         self.capital = 10.0
         self.min_price_step = 0.0001
+    
+    def set_capital(self, capital):
+        self.capital = capital
+    
+    def set_markers(self, markers):
+        self.markers = markers
     
     def self_min_price_step(self, min_price_step):
         self.min_price_step = min_price_step
@@ -518,7 +530,7 @@ class statdisp(Bot):
         position = self.exchange.get_position()
         position_size = position['positionAmt']
         entry_price = position['entryPrice']
-        self.update_markers(123.0, 0.6916)
+        self.update_markers(-123.0, 0.6916)
         # self.update_markers(position_size, entry_price)
         self.animate_plot.start_plot()
 
@@ -530,30 +542,17 @@ class statdisp(Bot):
 
         if not float(position_size) == 0.0:
 
-            pnl_percentage = -0.005
-            price = calc_pnl_exit_price(
-                entry_price=entry_price,
-                position=position_size,
-                min_price_step=self.min_price_step,
-                pnl=pnl_percentage*self.capital
-            )
-            self.animate_plot.add_marker(
-                {
-                    'label':'-0.05%',
-                    'value':price,
-                }
-            )
-
-            pnl_percentage = 0.005
-            price = calc_pnl_exit_price(
-                entry_price=entry_price,
-                position=position_size,
-                min_price_step=self.min_price_step,
-                pnl=pnl_percentage*self.capital
-            )
-            self.animate_plot.add_marker(
-                {
-                    'label':'+0.05%',
-                    'value':price,
-                }
-            )
+            for marker in self.markers:
+                price = calc_pnl_exit_price(
+                    entry_price=entry_price,
+                    position=position_size,
+                    min_price_step=self.min_price_step,
+                    pnl=marker['pnl_percent']*self.capital
+                )
+                self.animate_plot.add_marker(
+                    {
+                        'label':marker['label'],
+                        'value':price,
+                        'color':marker['color'],
+                    }
+                )

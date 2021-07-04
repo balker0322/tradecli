@@ -51,10 +51,11 @@ class AnimatePlot():
                 y_marker = []
                 for _ in range(self.range):
                     y_marker.append(marker['value'])
-                plt.plot(x, np.array(y_marker), label=marker['label'])
+                plt.plot(x, np.array(y_marker), label=marker['label'], color=marker['color'])
 
         plt.xlim(0, self.range)
 
+        plt.grid()
         plt.legend(loc='upper left')
         plt.tight_layout()
 
