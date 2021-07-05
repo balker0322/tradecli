@@ -33,7 +33,7 @@ def market_short_entry(pair, position_size):
     market_price = exchange.get_market_price()
     dummy_price = round_param(float(market_price)*(1.00-0.005), get_min_price_step(pair))
     dummy_price = float(dummy_price)
-    exchange.entry("Short", True, position_size, limit=dummy_price)
+    exchange.entry("Short", False, position_size, limit=dummy_price)
 
 def limit_long_entry(pair, position_size, entry_price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
@@ -64,8 +64,29 @@ def get_open_position(pair):
     return exchange.get_position()
 
 def close_open_position(pair):
+
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
-    exchange.close_all()
+    position = exchange.get_position()
+    position_size = float(position['positionAmt'])
+    print('position_size {}'.format(position_size))
+
+    if position_size == 0.0:
+        error_print('No open position for {} pair'.format(pair))
+        return
+
+    market_price = exchange.get_market_price()
+    print('market_price {}'.format(market_price))
+
+    if position_size > 0.0:
+        dummy_price = round_param(float(market_price)*(1.00-0.005), get_min_price_step(pair))
+        dummy_price = float(dummy_price)
+        print('Long dummy_price {}'.format(dummy_price))
+        exchange.entry("Short", False, abs(position_size), limit=dummy_price, reduce_only=True)
+
+    if position_size < 0.0:
+        dummy_price = round_param(float(market_price)*(1.00+0.005), get_min_price_step(pair))
+        dummy_price = float(dummy_price)
+        exchange.entry("Long", True, abs(position_size), limit=dummy_price, reduce_only=True)
 
 def cancel_all_order(pair):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
