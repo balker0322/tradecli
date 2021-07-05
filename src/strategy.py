@@ -520,8 +520,14 @@ class statdisp(Bot):
     def set_markers(self, markers):
         self.markers = markers
     
-    def self_min_price_step(self, min_price_step):
+    def set_min_price_step(self, min_price_step):
         self.min_price_step = min_price_step
+        decimal_display_count = 0
+        try:
+            decimal_display_count = len(min_price_step.split('.')[1])
+        except:
+            pass
+        self.animate_plot.decimal_display_count = decimal_display_count
 
     def strategy(self, open, close, high, low, volume):
         self.animate_plot.append_y_vals(new_val=float(close))
@@ -530,8 +536,8 @@ class statdisp(Bot):
         position = self.exchange.get_position()
         position_size = position['positionAmt']
         entry_price = position['entryPrice']
-        self.update_markers(-123.0, 0.6916)
-        # self.update_markers(position_size, entry_price)
+        # self.update_markers(-123.0, 0.6916) # for testing
+        self.update_markers(position_size, entry_price)
         self.animate_plot.start_plot()
 
     def on_position_change(self, position_size, entry_price):

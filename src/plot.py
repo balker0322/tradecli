@@ -10,6 +10,8 @@ from random import random
 
 class AnimatePlot():
 
+    decimal_display_count = 2
+
     def __init__(self):
         self.y_vals = []
         self.range = 1000
@@ -44,7 +46,8 @@ class AnimatePlot():
             y_mark = []
             for _ in range(self.range):
                 y_mark.append(self.num)
-            plt.plot(x, np.array(y_mark), label='{0:.4f} USDT'.format(self.num))
+            label_disp = '{0:.'+str(self.decimal_display_count)+'f} USDT'
+            plt.plot(x, np.array(y_mark), label=label_disp.format(self.num))
         
         if self.markers:
             for marker in self.markers:

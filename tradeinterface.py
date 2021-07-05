@@ -3,8 +3,10 @@ from src.binance_futures_websocket import BinanceFuturesWs
 from tradecalc import *
 from model import *
 import time
+import src.strategy as strategy
 
 BINANCE_ACCOUNT = 'binanceaccount2'
+BINANCE_ACCOUNT_VIEWING = 'binanceaccount1'
 
 def get_pair_info():
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair='', demo=False)
@@ -125,6 +127,23 @@ def auto_sltp(pair, sl, tp_targets):
 
     while True:
         time.sleep(1)
+
+def display_plot(**kwargs):
+    
+    cls = getattr(strategy, 'statdisp')
+    bot = cls()
+    bot.test_net  = False
+    bot.back_test = False
+    bot.stub_test = False
+    bot.hyperopt  = False
+    bot.account = BINANCE_ACCOUNT_VIEWING
+    bot.exchange_arg = 'binance'
+    bot.pair = kwargs['pair']
+    bot.set_capital(kwargs['capital'])
+    bot.set_min_price_step(kwargs['min_price_step'])
+    bot.run()
+    bot.animate_plot.set_label(bot.pair)
+    bot.run_animate_plot()
 
 
 

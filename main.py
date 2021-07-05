@@ -2,7 +2,6 @@ import click
 from model import *
 from tradeinterface import *
 from tradecalc import *
-import src.strategy as strategy
 
 
 def update_user_params(**kwargs):
@@ -394,22 +393,12 @@ def ws():
     '''
     start websocket
     '''
-    cls = getattr(strategy, 'statdisp')
-    bot = cls()
-    bot.test_net  = False
-    bot.back_test = False
-    bot.stub_test = False
-    bot.hyperopt  = False
-    bot.account = 'binanceaccount1'
-    bot.exchange_arg = 'binance'
-    bot.pair = 'XRPUSDT'
-    bot.run()
-
-    # signal.signal(signal.SIGINT, lambda x, y: bot.stop())
-    bot.animate_plot.set_label(bot.pair)
-    bot.run_animate_plot()
-    # while True:
-    #     time.sleep(1)
+    pair=get_pair()
+    display_plot(
+        pair=pair,
+        capital=get_capital(),
+        min_price_step = get_min_price_step(pair)
+    )
 
 
 if __name__ == '__main__':
