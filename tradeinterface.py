@@ -23,11 +23,17 @@ def get_pair_info():
 
 def market_long_entry(pair, position_size):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
-    exchange.entry("Long", True, position_size)
+    market_price = exchange.get_market_price()
+    dummy_price = round_param(float(market_price)*(1.00+0.005), get_min_price_step(pair))
+    dummy_price = float(dummy_price)
+    exchange.entry("Long", True, position_size, limit=dummy_price)
 
 def market_short_entry(pair, position_size):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
-    exchange.entry("Short", False, position_size)
+    market_price = exchange.get_market_price()
+    dummy_price = round_param(float(market_price)*(1.00-0.005), get_min_price_step(pair))
+    dummy_price = float(dummy_price)
+    exchange.entry("Short", True, position_size, limit=dummy_price)
 
 def limit_long_entry(pair, position_size, entry_price):
     exchange = BinanceFutures(account=BINANCE_ACCOUNT, pair=pair, demo=False)
