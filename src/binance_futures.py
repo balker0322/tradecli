@@ -939,7 +939,7 @@ class BinanceFutures:
     def __update_ohlcv(self, action, new_data):
         """
         get OHLCV data and execute the strategy
-        """    
+        """   
         open = new_data['open'].iloc[0]
         close = new_data['close'].iloc[0]
         high = new_data['high'].iloc[0]

@@ -144,8 +144,8 @@ class BinanceFuturesWs:
             if 'e' in obj['data']:                
                 e = obj['data']['e']
                 action = ""                
-                datas = obj['data']                
-                
+                datas = obj['data']
+
                 if e.startswith("kline"):
                     data = [{
                         "timestamp" : datas['k']['T'],
@@ -153,10 +153,10 @@ class BinanceFuturesWs:
                         "low" : float(datas['k']['l']),
                         "open" : float(datas['k']['o']),
                         "close" : float(datas['k']['c']),
-                        "volume" : float(datas['k']['v'])
-                    }]                     
-                    data[0]['timestamp'] = datetime.fromtimestamp(data[0]['timestamp']/1000).astimezone(UTC)                                        
-                    self.__emit(obj['data']['k']['i'], action, to_data_frame([data[0]]))                    
+                        "volume" : float(datas['k']['v']),
+                    }]   
+                    data[0]['timestamp'] = datetime.fromtimestamp(data[0]['timestamp']/1000).astimezone(UTC) 
+                    self.__emit(obj['data']['k']['i'], action, to_data_frame([data[0]]))                                          
                 elif e.startswith("24hrTicker"):
                     self.__emit(e, action, datas)               
 

@@ -33,7 +33,6 @@ class AnimatePlot():
         self.label = label
 
     def animate(self, i):
-        print(i)
         # self.set_y_vals()
         x = np.array(self.x_vals)
         y1 = np.array(self.y_vals)
