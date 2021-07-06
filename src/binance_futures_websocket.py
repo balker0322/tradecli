@@ -147,6 +147,33 @@ class BinanceFuturesWs:
                 datas = obj['data']
 
                 if e.startswith("kline"):
+                    '''
+                    Payload:
+                    {
+                        "e": "kline",     // Event type
+                        "E": 123456789,   // Event time
+                        "s": "BTCUSDT",    // Symbol
+                        "k": {
+                            "t": 123400000, // Kline start time
+                            "T": 123460000, // Kline close time
+                            "s": "BTCUSDT",  // Symbol
+                            "i": "1m",      // Interval
+                            "f": 100,       // First trade ID
+                            "L": 200,       // Last trade ID
+                            "o": "0.0010",  // Open price
+                            "c": "0.0020",  // Close price
+                            "h": "0.0025",  // High price
+                            "l": "0.0015",  // Low price
+                            "v": "1000",    // Base asset volume
+                            "n": 100,       // Number of trades
+                            "x": false,     // Is this kline closed?
+                            "q": "1.0000",  // Quote asset volume
+                            "V": "500",     // Taker buy base asset volume
+                            "Q": "0.500",   // Taker buy quote asset volume
+                            "B": "123456"   // Ignore
+                        }
+                    }
+                    '''
                     data = [{
                         "timestamp" : datas['k']['T'],
                         "high" : float(datas['k']['h']),
@@ -154,6 +181,8 @@ class BinanceFuturesWs:
                         "open" : float(datas['k']['o']),
                         "close" : float(datas['k']['c']),
                         "volume" : float(datas['k']['v']),
+                        "trades" : float(datas['k']['n']),
+                        "isclose" : datas['k']['x'],
                     }]   
                     data[0]['timestamp'] = datetime.fromtimestamp(data[0]['timestamp']/1000).astimezone(UTC) 
                     self.__emit(obj['data']['k']['i'], action, to_data_frame([data[0]]))                                          

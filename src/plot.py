@@ -11,6 +11,8 @@ from random import random
 class AnimatePlot():
 
     decimal_display_count = 2
+    fig, axs = plt.subplots(2)
+    fig.suptitle('Vertically stacked subplots')
 
     def __init__(self):
         self.y_vals = []
@@ -33,40 +35,45 @@ class AnimatePlot():
         self.label = label
 
     def animate(self, i):
-        # self.set_y_vals()
+
         x = np.array(self.x_vals)
         y1 = np.array(self.y_vals)
 
-        plt.cla()
-
-        plt.plot(x, y1, label=self.label)
-
+        self.axs[0].cla()
+        self.axs[0].plot(x, y1, label=self.label)
         if self.num is not None:
             y_mark = []
             for _ in range(self.range):
                 y_mark.append(self.num)
             label_disp = '{0:.'+str(self.decimal_display_count)+'f} USDT'
-            plt.plot(x, np.array(y_mark), label=label_disp.format(self.num))
+            self.axs[0].plot(x, np.array(y_mark), label=label_disp.format(self.num))
         
         if self.markers:
             for marker in self.markers:
                 y_marker = []
                 for _ in range(self.range):
                     y_marker.append(marker['value'])
-                plt.plot(x, np.array(y_marker), label=marker['label'], color=marker['color'])
+                self.axs[0].plot(x, np.array(y_marker), label=marker['label'], color=marker['color'])
+        self.axs[0].set_xlim(0, self.range)
+        self.axs[0].grid()
+        self.axs[0].legend(loc='upper left')
 
-        plt.xlim(0, self.range)
+        self.axs[1].cla()
+        self.axs[1].plot(x, y1, label=self.label)
+        self.axs[1].set_xlim(0, self.range)
+        self.axs[1].grid()
 
-        plt.grid()
-        plt.legend(loc='upper left')
+        # plt.legend(loc='upper left')
         plt.tight_layout()
+
+
 
     def start_plot(self):
         self.ani = FuncAnimation(plt.gcf(), self.animate, interval=1)
         plt.tight_layout()
         plt.show()
 
-    def append_y_vals(self, new_val):
+    def append_price(self, new_val):
         self.num = new_val
         print('new_val: {}'.format(self.num))
         self.y_vals.append(self.num)

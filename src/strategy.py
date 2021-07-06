@@ -530,7 +530,7 @@ class statdisp(Bot):
         self.animate_plot.decimal_display_count = decimal_display_count
 
     def strategy(self, open, close, high, low, volume):
-        self.animate_plot.append_y_vals(new_val=float(close))
+        self.animate_plot.append_price(new_val=float(close))
     
     def run_animate_plot(self):
         position = self.exchange.get_position()
