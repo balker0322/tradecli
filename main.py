@@ -75,8 +75,7 @@ def mlong():
     Market Long Entry
     '''
     pair = get_pair()
-    position_size = get_position_size(pair)
-    market_long_entry(pair, position_size)
+    market_long_entry(pair)
 
 # Market Short Entry
 @main.command()
@@ -85,9 +84,7 @@ def mshort():
     Market Short Entry
     '''
     pair = get_pair()
-    position_size = get_position_size(pair)
-    position_size = get_position_size(pair)
-    market_short_entry(pair, position_size)
+    market_short_entry(pair)
 
 # Limit Long Entry
 @main.command()
