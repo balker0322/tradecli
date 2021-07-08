@@ -130,6 +130,7 @@ PAIRS = ['BTCUSDT',
  'BTCDOMUSDT',
  'KEEPUSDT']
 INDICATORS = [
+    'market_cap',
     'rsi_1m',
     'rsi_5m',
     'rsi_15m',
@@ -173,11 +174,20 @@ def rsi(klines):
     closing_price = pd.to_numeric(closing_price)
     return ta.momentum.rsi(closing_price, window=len(closing_price)).iloc[-1]
 
+def get_market_cap(pairs=PAIRS):
+    info = client.get_products()['data']
+    mc = dict()
+    for x in info:
+        if x['s'] in pairs:
+            mc[x['s']]=(float(x['c'])*float(x['cs']))/(1000.0*1000.0*1000.0)
+    return mc
+
 def get_crypto_df(pairs=PAIRS, indicator=INDICATORS, num_period=NUMPERIOD):
 
     columns = ['pair']
     columns+=indicator
     df = pd.DataFrame(columns=columns)
+    marker_cap = get_market_cap(pairs)
 
     for pair in tqdm(pairs):
 
@@ -188,6 +198,9 @@ def get_crypto_df(pairs=PAIRS, indicator=INDICATORS, num_period=NUMPERIOD):
                 
                 if column == 'pair':
                     row_info[column] = pair
+                
+                if column == 'market_cap':
+                    row_info[column] = marker_cap[pair]
 
                 if column == 'rsi_1m':
                     row_info[column] = rsi(historical_klines(pair, '1m', num_period))
