@@ -114,15 +114,15 @@ def short_percent_pnl(entry_price, position_size, exit_price, capital, k_factor=
 def split_position(total, split_count, min_lot_size):
     position_list = []
     # remaining = round_param(total, min_lot_size)
-    remaining = d(str(total)) % d(float(min_lot_size)*float(split_count))
-    total_excess = int((remaining / d(min_lot_size))+d(0.5))
-    print(total_excess)
+    remaining = abs(d(total))
     for i in range(split_count):
-        position_item = round_param(float(total)/float(split_count), min_lot_size)
-        if i < total_excess:
-            position_item += d(min_lot_size)
+        position_item = round_param(remaining/d(int(split_count-i)), min_lot_size)
+        if i + 1 == split_count:
+            position_item = remaining
         position_item = abs(position_item)
         position_list.append(float(position_item))
+        remaining -= position_item
+    print(remaining)
     return position_list
 
 if __name__ == "__main__":
