@@ -69,7 +69,8 @@ class BinanceFuturesWs:
         self.endpoint = 'wss://' + domain + '/stream?streams=' + self.listenKey + '/' + self.pair + '@ticker/' + self.pair + '@kline_1m/' \
                         + self.pair + '@kline_5m/' + self.pair + '@kline_30m/' \
                         + self.pair + '@kline_1h/'  + self.pair + '@kline_1d/' + self.pair + '@kline_1w/' \
-                        + self.pair + '@depth20@100ms/' + self.pair + '@bookTicker'
+                        + self.pair + '@depth20@100ms/' + self.pair + '@bookTicker/' \
+                        + self.pair + '@aggTrade'
         self.ws = websocket.WebSocketApp(self.endpoint,
                              on_message=self.__on_message,
                              on_error=self.__on_error,
@@ -141,10 +142,27 @@ class BinanceFuturesWs:
             obj = json.loads(message)
             
             
-            if 'e' in obj['data']:                
+            if 'e' in obj['data']:   
                 e = obj['data']['e']
                 action = ""                
-                datas = obj['data']
+                datas = obj['data'] 
+
+                if e.startswith("aggTrade"):
+                    '''
+                    {
+                    "e": "aggTrade",  // Event type
+                    "E": 123456789,   // Event time
+                    "s": "BTCUSDT",    // Symbol
+                    "a": 5933014,     // Aggregate trade ID
+                    "p": "0.001",     // Price
+                    "q": "100",       // Quantity
+                    "f": 100,         // First trade ID
+                    "l": 105,         // Last trade ID
+                    "T": 123456785,   // Trade time
+                    "m": true,        // Is the buyer the market maker?
+                    }
+                    '''
+                    pass
 
                 if e.startswith("kline"):
                     '''
